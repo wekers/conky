@@ -37,7 +37,7 @@ and get your "api key"
 
 ##### Run:
 
-**++On terminal:++**  `conky -c ~/.conky/wekers/.conkyrc &`
+**On terminal:**  `conky -c ~/.conky/wekers/.conkyrc &`
 
 In `~/.conky/wekers/.conkyrc` file:
 
@@ -53,7 +53,7 @@ print days too ie: `voffset 8 and goto 3` voffset -> (vertical position), goto -
 #print days
 ${color}${voffset 8}${goto 3} ${execi 1000 date --date="1 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
 ```
-If you don't use **Nvidia**, comment **++all++** below with **#**
+If you don't use **Nvidia**, comment **all** below with **#**
 ```livescript
 #Use Nvidia
 ${if_match "${nvidia temp}" != "${nividia}"}${if_match "${nvidia temp}" != "N/A"}${voffset 3}${color1}Nvidia Gfx card ${color2}${hr}
@@ -64,7 +64,7 @@ ${color0}Mem Frequency:${color8}${goto 110}${nvidia memfreq} Mhz${goto 165}${col
 _ _ _
 
 
-> ###### Change all -> according your network name ie: **eth0, eth1, wlan0** etc..
+> ###### Change all -> as your network name ie: **eth0, eth1, wlan0** etc..
 ```bash
 # Network
 ${if_up eth1}${voffset 3}${color1}Network ${color}($nodename) ${color2}${hr}
@@ -122,7 +122,7 @@ ${execi 300 if grep --quiet weatherdata ~/.cache/weather_aux.xml; then cp ~/.cac
 
 - - -
 
-#####**++Compiling from Source, config:++**
+#####**Compiling from Source, config:**
 
 ```cmake
 ./configure --enable-hddtemp --enable-mpd --enable-moc --enable-rss --enable-lua --enable-lua-cairo --enable-weather-metar --enable-weather-xoap --enable-lua-imlib2 --enable-wlan --enable-portmon --enable-imlib2 --enable-nvidia
@@ -148,7 +148,7 @@ make install
 - libxml2-dev
 
 
-For macOS you can get the required libraries using these commands:
+**For macOS you can get the required libraries using these commands:**
 ```cmake
 brew install cmake freetype gettext lua imlib2 pkg-config
 brew link gettext --force
@@ -176,7 +176,7 @@ function conky_temperature (sensor)
 end
 ```
 
-######Change in file **conky.lua**
+Change in file **conky.lua**
 ```lua
 ${hwmon temp 2}
 ```
