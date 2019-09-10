@@ -168,13 +168,11 @@ ${lua_parse top mem 5}
 ${voffset -3}${color2}${hr 1}
 
 
-#${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q=joinville,br&units=metric&lang=pt&mode=xml&appid=c3e774c8544fee876b14fb3c9e817e22" | xmllint --format - > ~/.cache/weather_current_aux.xml} 
-${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?lat=-26.26&lon=-48.82&units=metric&lang=pt&mode=xml&appid=c3e774c8544fee876b14fb3c9e817e22" | xmllint --format - > ~/.cache/weather_current_aux.xml} 
+${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q="YOUR CITY"&units=metric&lang=pt&mode=xml&appid="YOUR API KEY" " | xmllint --format - > ~/.cache/weather_current_aux.xml} 
 
 ${execi 300 if grep --quiet current ~/.cache/weather_current_aux.xml; then cp ~/.cache/weather_current_aux.xml ~/.cache/weather_current.xml; fi}  
 
-#${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q=joinville,br&units=metric&lang=pt&mode=xml&appid=c3e774c8544fee876b14fb3c9e817e22" | xmllint --format - > ~/.cache/weather_aux.xml} 
-${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?lat=-26.26&lon=-48.82&units=metric&lang=pt&mode=xml&appid=c3e774c8544fee876b14fb3c9e817e22" | xmllint --format - > ~/.cache/weather_aux.xml} 
+${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q="YOUR CITY"&units=metric&lang=pt&mode=xml&appid="YOUR API KEY" " | xmllint --format - > ~/.cache/weather_aux.xml} 
 
 ${execi 300 if grep --quiet weatherdata ~/.cache/weather_aux.xml; then cp ~/.cache/weather_aux.xml ~/.cache/weather.xml; fi}  
 
