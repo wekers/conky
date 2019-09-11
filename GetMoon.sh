@@ -62,8 +62,8 @@ phase=$(sed -n 7p $HOME/.conky/wekers/raw|sed 's/ //')
 mrise_mset=$(moonrise_set $phase)
 sed -i 7a$(moonrise_set $phase) $HOME/.conky/wekers/raw
 img_in=$(sed -n 49p $HOME/.conky/wekers/raw)
-wget wget --output-document=$HOME/.conky/wekers/moon2.jpg https://static.die.net/moon/210.jpg
-#wget wget --output-document=$HOME/.conky/wekers/moon2.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg
+wget --output-document=$HOME/.conky/wekers/moon2.jpg https://static.die.net/moon/210.jpg
+#wget --output-document=$HOME/.conky/wekers/moon2.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg
 sleep 1
 #mirror moon image, hemisphere south
 if [[ $hemisphere == s ]]; then
