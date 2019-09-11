@@ -54,14 +54,8 @@ color9 ForestGreen
 default_bar_size 100 10
 
 alignment top_left
-#alignment top_right
-#gap_x 8
 gap_x 4
-#gap_x 444 #horizontal
-#gap_y 2
-####gap_y 48
 gap_y 1
-#gap_y 150 #vertical
 
 no_buffers yes
 uppercase no
@@ -72,10 +66,8 @@ use_spacer none
 top_name_width 18
 top_cpu_separate false
 
-
 lua_load ~/.conky/wekers/conky.lua
 lua_startup_hook init 5
-
 
 
 TEXT
@@ -94,7 +86,7 @@ ${voffset -4}${color 666666}${hr}${color}
 ${font Droid Sans Mono:size=7:style=bold}${goto 45}${voffset 10}${texeci 210 sh ~/.conky/wekers/GetMoon.sh > /dev/null 2>&1; sed -n '7p' ~/.conky/wekers/raw} ${execi 310 grep "Illumination" ~/.conky/wekers/raw | cut -d':' -f2 | sed 's/^ *//g'}
 ${image ~/.conky/wekers/moon.jpg -p 07,118 -s 33x33 -n }
 ${voffset -3}${color 666666}${hr}${color}
-#Imagen hoje
+# Image today
 ${execi 310 sh ~/.conky/wekers/time.sh img}
 ${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 800 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
@@ -105,7 +97,7 @@ ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml |
 ${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 803 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
 ${image ~/.cache/weather.png -p 205,12-s 90x90 -n}
-#Iconos de los dias
+# Day icons
 ${execi 310 sh ~/.conky/wekers/time.sh weather-1}${image ~/.cache/weather-1.png -p 30,170 -s 67x67 -n}
 ${execi 310 sh ~/.conky/wekers/time.sh weather-2}${image ~/.cache/weather-2.png -p 130,170 -s 67x67 -n} 
 ${execi 310 sh ~/.conky/wekers/time.sh weather-3}${image ~/.cache/weather-3.png -p 230,170 -s 67x67 -n} 
@@ -115,11 +107,12 @@ ${voffset -14}${goto 210}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 3
 ${voffset 4}${goto 10}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 1min}°
 ${voffset -15}${goto 110}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 2min}°
 ${voffset -14}${goto 210}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 3min}°
-#Imprime los dias
+# Print days
 ${color}${voffset 8}${goto 3} ${execi 1000 date --date="1 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
 ${voffset -15}${goto 110}${execi 1000 date --date="2 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
 ${voffset -15}${goto 210}${execi 1000 date --date="3 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
 #end wheater part
+# System part
 ${font}
 ${color2}${stippled_hr}
 ${color0}Linux Kernel:${color8}${kernel} ${exec cat /etc/issue | cut -c1-15 | sed '/^$/d'}
@@ -129,25 +122,27 @@ ${color0}CPU3:${offset +4}${lua_parse cpubar 3 ffa500 ffffff}${goto 165}${color0
 ${voffset 3}${color0}RAM used:${color8}${alignr 160} ${mem} ${color yellow1}($memperc%)${goto 165}${lua_parse temperature CPU}
 ${color0}Available RAM:${color8}${goto 100}${memmax}${goto 165}${lua_parse temperature MB}
 ${color9}${cpugraph 3dba19 aecf4c -t -l}
-#
+# Use Nvidia
 ${if_match "${nvidia temp}" != "${nividia}"}${if_match "${nvidia temp}" != "N/A"}${voffset 3}${color1}Nvidia Gfx card ${color2}${hr}
 ${color0}GPU Gfx Model:${color8}${goto 110}${exec nvidia-smi --query-gpu=gpu_name --format=csv,noheader,nounits}
 ${color0}GPU Frequency:${color8}${goto 110}${nvidia gpufreq} Mhz ${lua_parse gputemp temp}
 ${color0}Mem Frequency:${color8}${goto 110}${nvidia memfreq} Mhz${goto 165}${color0}Total Memory:${color8}${alignr}${exec nvidia-settings -q totaldedicatedGPUMemory -t}MB${else}${voffset -15}${endif}${endif}
-#
+# Network
 ${if_up wlp4s0}${voffset 3}${color1}Network ${color}($nodename) ${color2}${hr}
 ${color}wlp4s0: ${color0}Down:${color yellow1} ${downspeed wlp4s0}/s${color0}${goto 190}Up:${color OrangeRed1} ${upspeed wlp4s0}/s
 ${color9}${downspeedgraph wlp4s0 24,150 000000 91ec31} ${color9}${upspeedgraph wlp4s0 24,150 000000 ec3131}
 ${color0}LAN IP: ${color}${goto 60}${addr wlp4s0}${if_gw}${goto 180}${color0} gw: ${goto 215}${color}${gw_ip}
-${color0}WAN IP: ${color4}${goto 60}${texeci 36000 wget -q -O - checkip.dyndns.org | sed -e 's/[^[:digit:]\|.]//g' | awk -F "." '{print($1+1"."$2"."$3"."$4+1)}'}$endif${goto 180}${color0}dns: ${goto 215}${color}${nameserver}${endif}
+${color0}WAN IP: ${color4}${goto 60}${texeci 36000 wget -q -O - checkip.dyndns.org | sed -e 's/[^[:digit:]\|.]//g' | awk -F "." '{print($1"."$2"."$3"."$4)}'}$endif${goto 180}${color0}dns: ${goto 215}${color}${nameserver}${endif}
 ${color0}IPV6  : ${color4}${goto 60}${font :size=8}${color}${execi 36000 /sbin/ip addr show dev wlp4s0 | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d' | sed -n 1p}${font}
 #${color0}WAN IP: ${color4}${goto 60}${lua_parse wanip 600 }$endif${goto 180}${color0}dns: ${goto 215}${color}${nameserver}${endif}
+#File Systems
 ${voffset 3}${color1}File Systems ${color2}${hr}
 ${lua_parse fs / / sda1 7fff00 white}
 ${lua_parse fs /disk1 /disk1 sda5 7fff00 white}
 ${voffset 3}${color1}Disk IO ${color2}${hr}
 ${color0}dev${alignr 165}write${alignr 122}read${alignr 90}temp
 ${color3}sda${alignr 110}${color yellow1}${diskio_write sda}${alignr 50}${color8}${diskio_read sda}${alignr 20}${color yellow1}${hddtemp /dev/sda}${if_match "${hddtemp /dev/sda}" != "N/A"}${lua_parse deg}${else} ${endif}${alignr 5}${color9}${diskiograph sda 12,70 9855a3 5e066c 0 -t -l}
+# Proc and Mem usage
 ${voffset 3}${color1}Processes:${color} ${processes}  ${color1}Running:${color red} ${running_processes} ${color2}${hr 1}
 ${alignc}${color0}(top 5 sorted by CPU usage)
 ${color0}NAME${alignr 110}PID${alignr 60}CPU%${alignr 20}MEM%
@@ -167,14 +162,11 @@ ${lua_parse top mem 5}
 #
 ${voffset -3}${color2}${hr 1}
 
-
+# Get Weather data
+# examples https://openweathermap.org/current and https://openweathermap.org/api/hourly-forecast
 ${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q="YOUR CITY"&units=metric&lang=pt&mode=xml&appid="YOUR API KEY" " | xmllint --format - > ~/.cache/weather_current_aux.xml} 
-
-
 ${execi 300 if grep --quiet current ~/.cache/weather_current_aux.xml; then cp ~/.cache/weather_current_aux.xml ~/.cache/weather_current.xml; fi}  
 
 ${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q="YOUR CITY"&units=metric&lang=pt&mode=xml&appid="YOUR API KEY" " | xmllint --format - > ~/.cache/weather_aux.xml} 
-
-
 ${execi 300 if grep --quiet weatherdata ~/.cache/weather_aux.xml; then cp ~/.cache/weather_aux.xml ~/.cache/weather.xml; fi}  
 
