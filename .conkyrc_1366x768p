@@ -72,7 +72,6 @@ lua_startup_hook init 5
 
 TEXT
 ${font Mono:size=9}${if_running plasma-desktop}${voffset 28}${endif}${color}${time %a, %d %b %Y, %H:%M:%S} ${goto 190}${color0}Uptime:${color DarkOrange1} ${uptime}${color}
-#${if_running plasma-desktop}${voffset 5}${endif}${color}${time %a, %d %b %Y, %H:%M:%S} ${goto 190}${color0}Uptime:${color DarkOrange1} ${uptime}
 # Wheater part
 ${font Droid Sans Mono:size=14}$color${voffset 4}${execi 300 grep -oP '(?<=<name>).*(?=</name>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }, ${execi 300 grep -oP '(?<=<country>).*(?=</country>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }$font
 ${voffset -10}${font Droid Sans Mono:size=12:style=bold}${goto 288}${color FFD700}${execi 180 grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1+0.5)}'}°${color}
