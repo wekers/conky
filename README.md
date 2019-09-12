@@ -34,6 +34,8 @@ _ _ _
 Create Account on https://home.openweathermap.org/users/sign_up
 and get your "api key"
 
+**Create folder** `~/.conky/wekers` **copy all inside**
+
 
 ##### Run:
 
