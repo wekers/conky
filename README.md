@@ -86,9 +86,10 @@ ${color0}Linux Kernel:${color8}${kernel} ${exec cat /etc/issue | cut -c1-15 | se
 _ _ _
 > **File Systems:**
 >
-See It `fdisk -l`
-and `mount -l`
-feel free to change
+###### See It `fdisk -l`
+###### and `mount -l`
+###### feel free to change
+>
 ```bash
 ${voffset 3}${color1}File Systems ${color2}${hr}
 ${lua_parse fs / / sda1 7fff00 white}
