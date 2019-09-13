@@ -191,7 +191,7 @@ function conky_temperature (sensor)
 end
 ```
 
-Change in file **conky.lua**
+##### Change in file **conky.lua**
 ```lua
 ${hwmon temp 2}
 ```
