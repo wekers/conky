@@ -86,8 +86,7 @@ ${color0}Linux Kernel:${color8}${kernel} ${exec cat /etc/issue | cut -c1-15 | se
 _ _ _
 > **File Systems:**
 >
-###### See It `fdisk -l`
-###### and `mount -l`
+###### See It `fdisk -l` and `mount -l`
 ###### feel free to change
 >
 ```bash
