@@ -50,12 +50,12 @@ ${execi 310 sh ~/.conky/wekers/time.sh weather-1}${image ~/.cache/weather-1.png 
 ${execi 310 sh ~/.conky/wekers/time.sh weather-2}${image ~/.cache/weather-2.png -p 130,195 -s 70x70 -n} 
 ${execi 310 sh ~/.conky/wekers/time.sh weather-3}${image ~/.cache/weather-3.png -p 230,195 -s 70x70 -n} 
 ```
-print days too ie: `voffset 8 and goto 3` voffset -> (vertical position), goto -> (horizontal position)
+> print days too ie: `voffset 8 and goto 3` voffset -> (vertical position), goto -> (horizontal position)
 ```bash
 #print days
 ${color}${voffset 8}${goto 3} ${execi 1000 date --date="1 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
 ```
-If you don't use **Nvidia**, comment **all** below with **#**
+> If you don't use **Nvidia**, comment **all** below with **#**
 ```livescript
 #Use Nvidia
 ${if_match "${nvidia temp}" != "${nividia}"}${if_match "${nvidia temp}" != "N/A"}${voffset 3}${color1}Nvidia Gfx card ${color2}${hr}
