@@ -106,7 +106,7 @@ ${lua_parse fs /home /home sda3 7fff00 white}
 * * *
 
 
-#####**- Get Weather:**
+##### **- Get Weather:**
 `~/.conky/wekers/.conkyrc` file:
 ```lua
 # Get Weather data
@@ -135,7 +135,7 @@ ${execi 300 if grep --quiet weatherdata ~/.cache/weather_aux.xml; then cp ~/.cac
 
 - - -
 
-#####**Compiling from Source, config:**
+##### **Compiling from Source:**
 
 ```cmake
 ./configure --enable-hddtemp --enable-mpd --enable-moc --enable-rss --enable-lua --enable-lua-cairo --enable-weather-metar --enable-weather-xoap --enable-lua-imlib2 --enable-wlan --enable-portmon --enable-imlib2 --enable-nvidia
@@ -202,9 +202,10 @@ ${hwmon temp 1}
 _ _ _
 
 ##### hddtemp issue, to fix:
-`sudo dpkg-reconfigure hddtemp`
-`sudo chmod +s /usr/sbin/hddtemp`
-**see on terminal if work** `nc localhost 7634`
+###### `sudo dpkg-reconfigure hddtemp`
+###### `sudo chmod +s /usr/sbin/hddtemp`
+
+###### **see on terminal if work** `nc localhost 7634`
 
 * * *
 
