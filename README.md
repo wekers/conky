@@ -74,7 +74,7 @@ ${if_up eth1}${voffset 3}${color1}Network ${color}($nodename) ${color2}${hr}
 _ _ _
 
 
-> **Operational System and Proc Name:**
+> **Operational System and Kernel Version:**
 ###### (Slackware) ie:
 ```bash
 ${color0}Linux Kernel: ${color8}${kernel} on ${exec cat /etc/slackware-version}
@@ -83,7 +83,17 @@ ${color0}Linux Kernel: ${color8}${kernel} on ${exec cat /etc/slackware-version}
 ```bash
 ${color0}Linux Kernel:${color8}${kernel} ${exec cat /etc/issue | cut -c1-15 | sed '/^$/d'}
 ```
-
+_ _ _
+> **File Systems:**
+See It `fdisk -l`
+and `mount -l`
+feel free to change
+```bash
+${voffset 3}${color1}File Systems ${color2}${hr}
+${lua_parse fs / / sda1 7fff00 white}
+${lua_parse fs /boot /boot sda2 7fff00 white}
+${lua_parse fs /home /home sda3 7fff00 white}
+```
 - - -
 - - -
 - - -
@@ -148,6 +158,8 @@ make install
 - libxnvctrl-dev
 - libcurl4-openssl-dev
 - libxml2-dev
+- hddtemp
+
 
 
 **For macOS you can get the required libraries using these commands:**
@@ -186,7 +198,12 @@ to
 ```lua
 ${hwmon temp 1}
 ```
+_ _ _
 
+##### hddtemp issue, to fix:
+`sudo dpkg-reconfigure hddtemp`
+`sudo chmod +s /usr/sbin/hddtemp`
+**see on terminal if work** `nc localhost 7634`
 
 * * *
 
