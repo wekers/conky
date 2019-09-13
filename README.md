@@ -106,7 +106,7 @@ ${lua_parse fs /home /home sda3 7fff00 white}
 * * *
 
 
-##### **- Get Weather:**
+### **- Get Weather:**
 `~/.conky/wekers/.conkyrc` file:
 ```lua
 # Get Weather data
