@@ -1,6 +1,16 @@
 # check http://conky.sourceforge.net/config_settings.html for the list of settings
 # Check http://conky.sourceforge.net/variables.html for the list of variables
 
+# -------------------------------------------------------------------
+# File: .conkyrc                                         /\
+# Type: conky main file                                 /_.\
+# By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
+# Last modified:2019-09-16                     -~^    /______\`~~-^~:
+# ------------------------
+# Main File to Run
+# / OS : $Linux, $FreeBSD (X Window)
+# -------------------------------------------------------------------
+
 background yes
 
 font 7x13
@@ -78,7 +88,7 @@ ${voffset -10}${font Droid Sans Mono:size=12:style=bold}${goto 288}${color FFD70
 ${voffset -10}${font Droid Sans Mono:size=10:style=bold}${color FF8C00}${execi 180 grep "weather" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f4 | sed 's/.*/\u&/'}${color}
 ${voffset -1}${font Droid Sans Mono:size=8:style=bold}Umidade: ${execi 310 grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2}%
 # Humidity and wind
-${voffset 2}${font Droid Sans Mono:size=8:style=bold}Ventos à ${execi 180 grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1*3.6)}'} Kph ${font Droid Sans Mono:size=8}-> ${execi 300 sh ~/.conky/wekers/time.sh dir} (${execi 610 grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6})
+${voffset 2}${font Droid Sans Mono:size=8:style=bold}Ventos à ${execi 180 grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1*3.6)}'} Kph ${font Droid Sans Mono:size=8}-> ${execi 300 sh ~/.conky/wekers/time.sh dir} (${execi 300 sh ~/.conky/wekers/time.sh wname})
 ${voffset 2}${font Droid Sans Mono:size=7:style=bold}${texeci 30 sh ~/.conky/wekers/time.sh precipitation}${font}
 # Moon part
 ${voffset -4}${color 666666}${hr}${color}
