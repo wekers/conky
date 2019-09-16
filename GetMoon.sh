@@ -88,3 +88,4 @@ if [[ $lang == pt-br ]]; then
   sed -i -e 's/First Quarter/Quarto Crescente/g' ~/.conky/wekers/raw
   sed -i -e 's/Last Quarter/Quarto Minguante/g' ~/.conky/wekers/raw
 fi
+
