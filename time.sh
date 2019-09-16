@@ -4,11 +4,13 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-09-04                     -~^    /______\`~~-^~:
+# Last modified:2019-09-16                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
 # -------------------------------------------------------------------
+
+lang="pt-br"
 
 
 case $1 in
@@ -28,7 +30,26 @@ case $1 in
 	      echo ""
 	    fi
 	  ;;
-
+      wname)
+          #sed translate to pt-br 
+          if [[ $lang == "pt-br" ]]; then
+	    result=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6 \
+			     | sed -e 's/Light breeze/Brisa Leve/g' \
+			     | sed -e 's/Moderate breeze/Brisa Moderada/g' \
+			     | sed -e 's/Fresh Breeze/Brisa Fresca/g' \
+			     | sed -e 's/Gentle Breeze/Brisa Suave/g' \
+			     | sed -e 's/Strong breeze/Brisa Forte/g' \
+			     | sed -e 's/Calm/Brisa Calma/g')         
+	  else
+	     result=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
+	  fi
+	  
+	    if [[ $result != "Setting" ]]; then
+	      	     echo "$result"
+	    else
+	      echo ""
+	    fi	    
+	  ;;
       1max)
 	  time=$(date --date="1 day" +%Y-%m-%dT15:00:00)
 	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
