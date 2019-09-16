@@ -5,11 +5,15 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-09-04                     -~^    /______\`~~-^~:
+# Last modified:2019-09-16                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
 # -------------------------------------------------------------------
+
+
+#lang to translate moon phase name
+lang=pt-br
 
 #function: moonrise_set
 moonrise_set () {
@@ -72,12 +76,15 @@ else
   mv ~/.conky/wekers/moon2.jpg ~/.conky/wekers/moon.jpg
 fi
 
+
 #translate pt-br
-sed -i -e 's/New Moon/Lua Nova/g' ~/.conky/wekers/raw
-sed -i -e 's/Full Moon/Lua Cheia/g' ~/.conky/wekers/raw
-sed -i -e 's/Waxing Crescent/Lua Crescente/g' ~/.conky/wekers/raw
-sed -i -e 's/Waxing Gibbous/Lua Crescente/g' ~/.conky/wekers/raw
-sed -i -e 's/Waning Crescent/Lua Minguante/g' ~/.conky/wekers/raw
-sed -i -e 's/Waning Gibbous/Lua Minguante/g' ~/.conky/wekers/raw
-sed -i -e 's/First Quarter/Quarto Crescente/g' ~/.conky/wekers/raw
-sed -i -e 's/Last Quarter/Quarto Minguante/g' ~/.conky/wekers/raw
+if [[ $lang == pt-br ]]; then
+  sed -i -e 's/New Moon/Lua Nova/g' ~/.conky/wekers/raw
+  sed -i -e 's/Full Moon/Lua Cheia/g' ~/.conky/wekers/raw
+  sed -i -e 's/Waxing Crescent/Lua Crescente/g' ~/.conky/wekers/raw
+  sed -i -e 's/Waxing Gibbous/Lua Crescente/g' ~/.conky/wekers/raw
+  sed -i -e 's/Waning Crescent/Lua Minguante/g' ~/.conky/wekers/raw
+  sed -i -e 's/Waning Gibbous/Lua Minguante/g' ~/.conky/wekers/raw
+  sed -i -e 's/First Quarter/Quarto Crescente/g' ~/.conky/wekers/raw
+  sed -i -e 's/Last Quarter/Quarto Minguante/g' ~/.conky/wekers/raw
+fi
