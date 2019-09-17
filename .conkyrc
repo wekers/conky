@@ -106,6 +106,8 @@ ${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | 
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
 ${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 803 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
+${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 741 }
+${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
 ${image ~/.cache/weather.png -p 205,32-s 90x90 -n}
 # Day icons
 ${execi 310 sh ~/.conky/wekers/time.sh weather-1}${image ~/.cache/weather-1.png -p 30,195 -s 70x70 -n}
