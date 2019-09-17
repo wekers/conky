@@ -113,7 +113,7 @@ ${image ~/.cache/weather.png -p 205,32-s 90x90 -n}
 ${execi 310 sh ~/.conky/wekers/time.sh weather-1}${image ~/.cache/weather-1.png -p 30,195 -s 70x70 -n}
 ${execi 310 sh ~/.conky/wekers/time.sh weather-2}${image ~/.cache/weather-2.png -p 130,195 -s 70x70 -n} 
 ${execi 310 sh ~/.conky/wekers/time.sh weather-3}${image ~/.cache/weather-3.png -p 230,195 -s 70x70 -n} 
-${voffset -65}${font Mono:size=9}${goto 10}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 1max}°
+${voffset -75}${font Mono:size=9}${goto 10}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 1max}°
 ${voffset -14}${goto 110}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 2max}°
 ${voffset -14}${goto 210}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 3max}°
 ${voffset 4}${goto 10}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 1min}°
