@@ -16,6 +16,9 @@ _ _ _
 ![print1](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_1.jpg)
 ![print2](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_2.jpg)
 * * *
+##### PrintScreen 1920x1080p English:
+![print2](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_4.jpg)
+* * *
 ##### PrintScreen 720p:
 
 ![print720p](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_720p.png)
