@@ -103,11 +103,13 @@ ${lua_parse fs /home /home sda3 7fff00 white}
 - - -
 _ _ _
 > **Wind Icon:**
+> 
 **Green** ![wind green](https://raw.githubusercontent.com/wekers/conky/master/images/wind/green_s.png) **Orange** ![wind orange](https://raw.githubusercontent.com/wekers/conky/master/images/wind/orange_s.png) **Red** ![wind red](https://raw.githubusercontent.com/wekers/conky/master/images/wind/red_s.png) **Yellow**![wind yellow](https://raw.githubusercontent.com/wekers/conky/master/images/wind/yellow_s.png)
 - - -
 > ###### Change as you more like
-In `time.sh`
-######Replace --> green, orange, red and yellow
+###### In `time.sh`
+>
+###### Replace --> green, orange, red and yellow
 ```bash
 wicon)
 	  cp -f ${DirShell}/images/wind/orange_$(grep "direction" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f4 | tr [[:upper:]] [[:lower:]] | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g').png ~/.cache/wind.png
