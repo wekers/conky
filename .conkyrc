@@ -5,7 +5,7 @@
 # File: .conkyrc                                         /\
 # Type: conky main file                                 /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-09-16                     -~^    /______\`~~-^~:
+# Last modified:2019-10-04                     -~^    /______\`~~-^~:
 # ------------------------
 # Main File to Run
 # / OS : $Linux, $FreeBSD (X Window)
@@ -82,51 +82,62 @@ lua_startup_hook init 5
 
 
 TEXT
-${font Mono:size=9}${if_running plasma-desktop}${voffset 28}${endif}${color}${time %a, %d %b %Y, %H:%M:%S} ${goto 190}${color0}Uptime:${color DarkOrange1} ${uptime}${color}
-# Weather part
-${font Droid Sans Mono:size=14}$color${voffset 4}${execi 300 grep -oP '(?<=<name>).*(?=</name>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }, ${execi 300 grep -oP '(?<=<country>).*(?=</country>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }$font
+${font Mono:size=9}${if_running plasma-desktop}${voffset 28}${endif}${color ccddfe}${time %a, %d %b %Y, %H:%M:%S} ${goto 190}${color0}Uptime:${color DarkOrange1} ${uptime}${color}
+# Wheater part
+${font Droid Sans Mono:size=14}${color CCCCDD}${voffset 4}${execi 300 grep -oP '(?<=<name>).*(?=</name>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }, ${execi 300 grep -oP '(?<=<country>).*(?=</country>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }$font
 ${voffset -10}${font Droid Sans Mono:size=12:style=bold}${goto 288}${color FFD700}${execi 180 grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1+0.5)}'}°${color}
 ${voffset -10}${font Droid Sans Mono:size=10:style=bold}${color FF8C00}${execi 180 grep "weather" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f4 | sed 's/.*/\u&/'}${color}
-${voffset -1}${font Droid Sans Mono:size=8:style=bold}Umidade: ${execi 310 grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2}%
-# Humidity and wind
-${voffset 2}${font Droid Sans Mono:size=8:style=bold}Ventos à ${execi 180 grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1*3.6)}'} Kph ${font Droid Sans Mono:size=8}-> ${execi 300 sh ~/.conky/wekers/time.sh dir} (${execi 300 sh ~/.conky/wekers/time.sh wname})
-${voffset 2}${font Droid Sans Mono:size=7:style=bold}${texeci 30 sh ~/.conky/wekers/time.sh precipitation}${font}
+${voffset -1}${font Droid Sans Mono:size=8:style=bold}${color EEFFFE}Umidade: ${color 77bfe8}${execi 310 grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2}%${color}
+# Humudity and wind
+${voffset 2}${font Droid Sans Mono:size=8:style=bold}${color EEFFFE}Ventos à ${color 3cbf9a}${execi 180 grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1*3.6)}'} Kph ${color}${font Droid Sans Mono:size=7:style=bold} --> ${color 3cbf9a}${execi 180 sh ~/.conky/wekers/time.sh dir}${color}
+${voffset 2}${font Droid Sans Mono:size=7:style=bold}${color 3cbf9a} --> ${color CCCCDE}${execi 180 sh ~/.conky/wekers/time.sh wname}
+${voffset 2}${font Droid Sans Mono:size=7:style=bold}${color 77bfe5}${execi 130 sh ~/.conky/wekers/time.sh precipitation}${font}
 # Moon part
-${voffset -7}${color 666666}${hr}${color}
-${font Droid Sans Mono:size=7:style=bold}${goto 48}${voffset 13}${execi 600 sh ~/.conky/wekers/GetMoon.sh > /dev/null 2>&1; sed -n '7p' ~/.conky/wekers/raw} ${execi 610 grep "Illumination" ~/.conky/wekers/raw | cut -d':' -f2 | sed 's/^ *//g'}
-${image ~/.conky/wekers/moon.jpg -p 07,132 -s 40x40 -n}
-${voffset 2}${color 666666}${hr}${color}
+${voffset -10}${color 666666}${hr}${color}
+${font Droid Sans Mono:size=7:style=bold}${goto 52}${voffset 15}${color ecdfdd}${execi 600 sh ~/.conky/wekers/GetMoon.sh > /dev/null 2>&1}${execi 180 sed -n '7p' ~/.conky/wekers/raw} ${execi 610 grep "Illumination" ~/.conky/wekers/raw | cut -d':' -f2 | sed 's/^ *//g'}
+${font Droid Sans Mono:size=7:style=bold}${goto 165}${voffset -20}${color 667733}${execi 620 sh ~/.conky/wekers/time.sh mnext}
+${goto 165}${voffset 8}${color 669866}${execi 630 sh ~/.conky/wekers/time.sh mnextfull}${color}
+${image ~/.conky/wekers/moon.jpg -p 07,143 -s 40x40 -n}${execi 320 sh ~/.conky/wekers/lune_die.sh > /dev/null 2>&1}
+${voffset -6}${color 666666}${hr}${color}
 # Image today
-${execi 310 sh ~/.conky/wekers/time.sh img}
-${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 800 }
+${execi 190 sh ~/.conky/wekers/time.sh img}
+${if_match ${exec grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 800 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
-${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 801 }
+${if_match ${exec grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 801 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
-${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 802 }
+${if_match ${exec grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 802 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
-${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 803 }
+${if_match ${exec grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 803 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
-${if_match ${execi 260 grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 741 }
+${if_match ${exec grep "number" ~/.cache/weather_current.xml | sed -n 1p | cut -d'"' -f2} == 741 }
 ${exec cp -f ~/.conky/wekers/images/$(grep "icon" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6).png ~/.cache/weather.png}${endif}
 ${image ~/.cache/weather.png -p 205,32-s 90x90 -n}
 # Day icons
 ${execi 310 sh ~/.conky/wekers/time.sh weather-1}${image ~/.cache/weather-1.png -p 30,195 -s 70x70 -n}
 ${execi 310 sh ~/.conky/wekers/time.sh weather-2}${image ~/.cache/weather-2.png -p 130,195 -s 70x70 -n} 
 ${execi 310 sh ~/.conky/wekers/time.sh weather-3}${image ~/.cache/weather-3.png -p 230,195 -s 70x70 -n} 
-${voffset -75}${font Mono:size=9}${goto 10}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 1max}°
+${voffset -85}${font Mono:size=9}${goto 10}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 1max}°
 ${voffset -14}${goto 110}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 2max}°
 ${voffset -14}${goto 210}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 3max}°
 ${voffset 4}${goto 10}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 1min}°
 ${voffset -15}${goto 110}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 2min}°
 ${voffset -14}${goto 210}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 3min}°
 # Print days
-${color}${voffset 8}${goto 3} ${execi 1000 date --date="1 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
-${voffset -15}${goto 110}${execi 1000 date --date="2 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
-${voffset -15}${goto 210}${execi 1000 date --date="3 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
+${color cfafef}${voffset 8}${goto 3} ${execi 1000 date --date="1 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
+${voffset -13}${goto 110}${execi 1000 date --date="2 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}
+${voffset -14}${goto 210}${execi 1000 date --date="3 day" | cut -c1-4 |tr [[:lower:]] [[:upper:]]}${color}
+# Print forecast
+${voffset -6}${color 666666}${hr}${color}
+${font Mono:size=6:style=bold}
+${voffset -10}${goto 10}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-1}${color}
+${voffset -8}${goto 110}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-2}${color}
+${voffset -10}${goto 210}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-3}${color}
+${color 666666}${hr}${color}
+# Wind icon
+${execi 260 sh ~/.conky/wekers/time.sh wicon}${image ~/.cache/wind.png -p 142,85 -s 35x35 -n}
 # end wheater part
 # System part
-${font}
-${color2}${stippled_hr}
+${voffset -18}${font}${color2}${stippled_hr}
 ${color0}Linux Kernel: ${color8}${kernel} on ${exec cat /etc/slackware-version}
 ${color0}CPU Details:${color8}${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //' | sed -e 's/(R)//' | sed -e 's/(TM)//'| uniq | sed 's/CPU.*//g'} - ${machine}, $freq(MHz)
 ${color0}CPU1:${offset +4}${lua_parse cpubar 1 ffa500 ffffff}${goto 165}${color0}CPU2:${offset +4}${lua_parse cpubar 2 ffa500 ffffff}
@@ -144,7 +155,7 @@ ${if_up eth1}${voffset 3}${color1}Network ${color}($nodename) ${color2}${hr}
 ${color}eth1: ${color0}Down:${color yellow1} ${downspeed eth1}/s${color0}${goto 190}Up:${color OrangeRed1} ${upspeed eth1}/s
 ${color9}${downspeedgraph eth1 24,150 000000 91ec31} ${color9}${upspeedgraph eth1 24,150 000000 ec3131}
 ${color0}LAN IP: ${color}${goto 60}${addr eth1}${if_gw}${goto 180}${color0} gw: ${goto 215}${color}${gw_ip}
-${color0}WAN IP: ${color4}${goto 60}${texeci 36000 wget -q -O - checkip.dyndns.org | sed -e 's/[^[:digit:]\|.]//g' | awk -F "." '{print($1"."$2"."$3"."$4)}'}$endif${goto 180}${color0}dns: ${goto 215}${color}${nameserver}${endif}
+${color0}WAN IP: ${color4}${goto 60}${texeci 36000 wget -q -O - checkip.dyndns.org | sed -e 's/[^[:digit:]\|.]//g' | awk -F "." '{print($1+1"."$2"."$3"."$4)}'}$endif${goto 180}${color0}dns: ${goto 215}${color}${nameserver}${endif}
 ${color0}IPV6  : ${color4}${goto 60}${font :size=9}${color}${execi 36000  /sbin/ip addr show dev eth1 | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d' | sed -n 1p}${font}
 #${color0}WAN IP: ${color4}${goto 60}${lua_parse wanip 600 }$endif${goto 180}${color0}dns: ${goto 215}${color}${nameserver}${endif}
 # File Systems
@@ -187,11 +198,12 @@ ${lua_parse top mem 5}
 #
 ${voffset -3}${color2}${hr 1}
 
+# in &lang=pt, see your language at https://openweathermap.org/current on Multilingual support
 # Get Weather data
-# examples https://openweathermap.org/current and https://openweathermap.org/api/hourly-forecast
-${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q="your country here"&units=metric&lang=pt&mode=xml&appid="your key"" | xmllint --format - > ~/.cache/weather_current_aux.xml} 
+
+${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q=YOUR CITY&units=metric&mode=xml&appid=YOUR API KEY" | xmllint --format - > ~/.cache/weather_current_aux.xml} 
 ${execi 300 if grep --quiet current ~/.cache/weather_current_aux.xml; then cp ~/.cache/weather_current_aux.xml ~/.cache/weather_current.xml; fi}  
 
-${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q="your country here"&units=metric&lang=pt&mode=xml&appid="your key"" | xmllint --format - > ~/.cache/weather_aux.xml} 
+${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q=YOUR CITY&units=metric&lang=pt&mode=xml&appid=YOUR API KEY" | xmllint --format - > ~/.cache/weather_aux.xml} 
 ${execi 300 if grep --quiet weatherdata ~/.cache/weather_aux.xml; then cp ~/.cache/weather_aux.xml ~/.cache/weather.xml; fi}  
 
