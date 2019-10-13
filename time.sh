@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-09-30                     -~^    /______\`~~-^~:
+# Last modified:2019-10-12                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -25,7 +25,8 @@ case $lang in
           cpre="--> Possib. Chuva"
           rain="--> Chuva"
           proxlem=$(sed -n 4p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
-          proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-22)
+          proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-9)
+          proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
           proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
           on="em"
           prox="Próx"
@@ -43,12 +44,13 @@ case $lang in
           # default
           cpre="--> Chance of Precipitation"
           rain="--> Rain"
-          proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-22);
+          proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-9);
           proxlem=$proxlemc
           proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-22)
           on="in"
           prox="Next"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
+          proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
           ;;
 
 esac
@@ -181,7 +183,7 @@ case $1 in
       mnextfull)
           proxlfull=$(sed -n 1p ${DirShell}/moon_phase_die)
 	     if [ $(sed -n 2p ${DirShell}/moon_phase_die | wc -m) -gt 8 ]; then
-		echo "   $proxlfull$proxlemc"
+		echo "   $proxlfull$proxlemcfull"
 	     else
                 echo "   $prox $proxlfull --> $proxlfullem"
 
