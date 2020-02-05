@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-09-30                     -~^    /______\`~~-^~:
+# Last modified:2020-02-05                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -81,12 +81,12 @@ mrise_mset=$(moonrise_set $phase)
 sed -i 7a$(moonrise_set $phase) ${DirShell}/raw
 img_in=$(sed -n 49p ${DirShell}/raw)
 
-wget --output-document=${DirShell}/moon_tmp.jpg https://static.die.net/moon/210.jpg > /dev/null 2>&1
-#wget --output-document=${DirShell}/moon2.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
+#wget --output-document=${DirShell}/moon_tmp.jpg https://static.die.net/moon/210.jpg > /dev/null 2>&1
+wget --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
 sleep 1
 # mirror moon image, hemisphere south
 if [[ $hemisphere == s ]]; then
-  convert -flop ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
+  convert -flop -colorspace rgb ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
   rm ${DirShell}/moon_tmp.jpg
 else
   mv ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
