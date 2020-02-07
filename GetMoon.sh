@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-02-05                     -~^    /______\`~~-^~:
+# Last modified:2020-02-07                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -89,7 +89,8 @@ if [[ $hemisphere == s ]]; then
   convert -flop -colorspace rgb ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
   rm ${DirShell}/moon_tmp.jpg
 else
-  mv ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
+  convert -colorspace rgb ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
+  rm ${DirShell}/moon_tmp.jpg
 fi
 
 
