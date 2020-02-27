@@ -5,7 +5,7 @@
 # File: .conkyrc                                         /\
 # Type: conky main file                                 /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-10-04                     -~^    /______\`~~-^~:
+# Last modified:2020-02-23                     -~^    /______\`~~-^~:
 # ------------------------
 # Main File to Run
 # / OS : $Linux, $FreeBSD (X Window)
@@ -85,12 +85,12 @@ TEXT
 ${font Mono:size=9}${if_running plasma-desktop}${voffset 28}${endif}${color ccddfe}${time %a, %d %b %Y, %H:%M:%S} ${goto 190}${color0}Uptime:${color DarkOrange1} ${uptime}${color}
 # Wheater part
 ${font Droid Sans Mono:size=14}${color CCCCDD}${voffset 4}${execi 300 grep -oP '(?<=<name>).*(?=</name>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }, ${execi 300 grep -oP '(?<=<country>).*(?=</country>)' ~/.cache/weather.xml | tr "[:lower:]" "[:upper:]" }$font
-${voffset -10}${font Droid Sans Mono:size=12:style=bold}${goto 288}${color FFD700}${execi 180 grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1+0.5)}'}°${color}
+${voffset -10}${font Droid Sans Mono:size=12:style=bold}${goto 288}${if_match ${exec sh ~/.conky/wekers/time.sh temp}>32}${color fb5800}${exec sh ~/.conky/wekers/time.sh temp}°${else}${if_match ${exec sh ~/.conky/wekers/time.sh temp}>20}${color FFD700}${exec sh ~/.conky/wekers/time.sh temp}°${else}${color}${if_match ${exec sh ~/.conky/wekers/time.sh temp}<15}${color 77bfe8}${exec sh ~/.conky/wekers/time.sh temp}°${else}${color}${if_match ${exec sh ~/.conky/wekers/time.sh temp}>15}${color EEFFFE}${exec sh ~/.conky/wekers/time.sh temp}°${color}${endif}${endif}${endif}${endif}${color}
 ${voffset -10}${font Droid Sans Mono:size=10:style=bold}${color FF8C00}${execi 180 grep "weather" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f4 | sed 's/.*/\u&/'}${color}
 ${voffset -1}${font Droid Sans Mono:size=8:style=bold}${color EEFFFE}Umidade: ${color 77bfe8}${execi 310 grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2}%${color}
 # Humudity and wind
 ${voffset 2}${font Droid Sans Mono:size=8:style=bold}${color EEFFFE}Ventos à ${color 3cbf9a}${execi 180 grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1*3.6)}'} Kph ${color}${font Droid Sans Mono:size=7:style=bold} --> ${color 3cbf9a}${execi 180 sh ~/.conky/wekers/time.sh dir}${color}
-${voffset 2}${font Droid Sans Mono:size=7:style=bold}${color 3cbf9a} --> ${color CCCCDE}${execi 180 sh ~/.conky/wekers/time.sh wname}
+${voffset 2}${font Droid Sans Mono:size=7:style=bold}${color 3cbf9a} --> ${color CCCCDE}${execi 180 sh ~/.conky/wekers/time.sh wname}${color 777888}${font Droid Sans Mono:size=7}${goto 200}${exec sh ~/.conky/wekers/time.sh atext} ${color AAAAAA}±${execi 190 sh ~/.conky/wekers/time.sh at}°${color}${font}
 ${voffset 2}${font Droid Sans Mono:size=7:style=bold}${color 77bfe5}${execi 130 sh ~/.conky/wekers/time.sh precipitation}${font}
 # Moon part
 ${voffset -10}${color 666666}${hr}${color}
@@ -134,7 +134,7 @@ ${voffset -8}${goto 110}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh ca
 ${voffset -10}${goto 210}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-3}${color}
 ${color 666666}${hr}${color}
 # Wind icon
-${execi 260 sh ~/.conky/wekers/time.sh wicon}${image ~/.cache/wind.png -p 142,85 -s 35x35 -n}
+${execi 260 sh ~/.conky/wekers/time.sh wicon}${image ~/.cache/wind.png -p 145,85 -s 35x35 -n}
 # end wheater part
 # System part
 ${voffset -18}${font}${color2}${stippled_hr}

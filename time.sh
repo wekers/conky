@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2019-10-12                     -~^    /______\`~~-^~:
+# Last modified:2020-02-20                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -30,6 +30,7 @@ case $lang in
           proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
           on="em"
           prox="Próx"
+          feels="Sensação Térmica"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6 \
 			     | sed -e 's/Light breeze/Brisa Leve/g' \
 			     | sed -e 's/Moderate breeze/Brisa Moderada/g' \
@@ -51,6 +52,7 @@ case $lang in
           prox="Next"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
           proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
+          feels="Feels Like"
           ;;
 
 esac
@@ -189,6 +191,28 @@ case $1 in
 
              fi
           ;;
+
+      at)
+          # Apparent temp calc
+          temper=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6)
+          wspeed=$(grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
+          rh=$(grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
+          rhcalc=$(echo "$rh/100" | bc -l)
+          exp=$(echo "(17.27*$temper) / (237.7+$temper)" | bc -l)
+          ex=$(echo "e($exp*l(6.105))" | bc -l)
+          e=$(echo "$rhcalc*$ex" | bc -l)
+          at=$(echo "$temper + (0.348 * $e) - (0.7 * wspeed) - 4" | bc -l)
+          echo $at | awk '{print int($at+0.5)}'
+          ;;
+
+       atext)
+	  echo $feels
+	  ;;
+
+       temp)
+	  temperature=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6 | awk '{print int($1+0.5)}')
+	  echo "$temperature"
+       ;;
 
        precipitation)
           hora=$(date --date="now" +%H%M)
