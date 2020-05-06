@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-02-20                     -~^    /______\`~~-^~:
+# Last modified:2020-04-25                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -174,7 +174,7 @@ case $1 in
 
       mnext)
 	  proxl=$(sed -n 3p ${DirShell}/moon_phase_die)
-	     if [ $(sed -n 4p ${DirShell}/moon_phase_die | wc -m) -gt 8 ]; then
+	     if [ $(sed -n 4p ${DirShell}/moon_phase_die | wc -m) -gt 9 ]; then
 		echo "   $proxl$proxlemc"
 	     else
                 echo "   $prox $proxl  --> $proxlem"
@@ -184,7 +184,7 @@ case $1 in
 
       mnextfull)
           proxlfull=$(sed -n 1p ${DirShell}/moon_phase_die)
-	     if [ $(sed -n 2p ${DirShell}/moon_phase_die | wc -m) -gt 8 ]; then
+	     if [ $(sed -n 2p ${DirShell}/moon_phase_die | wc -m) -gt 9 ]; then
 		echo "   $proxlfull$proxlemcfull"
 	     else
                 echo "   $prox $proxlfull --> $proxlfullem"
