@@ -5,7 +5,7 @@
 # File: .conkyrc                                         /\
 # Type: conky main file                                 /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-02-23                     -~^    /______\`~~-^~:
+# Last modified:2020-05-30                     -~^    /______\`~~-^~:
 # ------------------------
 # Main File to Run
 # / OS : $Linux, $FreeBSD (X Window)
@@ -201,9 +201,9 @@ ${voffset -3}${color2}${hr 1}
 # in &lang=pt, see your language at https://openweathermap.org/current on Multilingual support
 # Get Weather data
 
-${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q=YOUR CITY&units=metric&mode=xml&appid=YOUR API KEY" | xmllint --format - > ~/.cache/weather_current_aux.xml} 
+${execi 300 curl "https://api.openweathermap.org/data/2.5/weather?q=YOUR CITY&units=metric&mode=xml&appid=YOUR API KEY" -k | xmllint --format - > ~/.cache/weather_current_aux.xml} 
 ${execi 300 if grep --quiet current ~/.cache/weather_current_aux.xml; then cp ~/.cache/weather_current_aux.xml ~/.cache/weather_current.xml; fi}  
 
-${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q=YOUR CITY&units=metric&lang=pt&mode=xml&appid=YOUR API KEY" | xmllint --format - > ~/.cache/weather_aux.xml} 
+${execi 300 curl "https://api.openweathermap.org/data/2.5/forecast?q=YOUR CITY&units=metric&lang=pt&mode=xml&appid=YOUR API KEY" -k | xmllint --format - > ~/.cache/weather_aux.xml} 
 ${execi 300 if grep --quiet weatherdata ~/.cache/weather_aux.xml; then cp ~/.cache/weather_aux.xml ~/.cache/weather.xml; fi}  
 
