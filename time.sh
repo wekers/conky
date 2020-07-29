@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-04-25                     -~^    /______\`~~-^~:
+# Last modified:2020-07-28                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -22,7 +22,8 @@ case $lang in
 
      # translate pt-br
      pt-br)
-          cpre="--> Possib. Chuva"
+          cpre="--> "
+          cprec="Possib. Chuva"
           rain="--> Chuva"
           proxlem=$(sed -n 4p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
           proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-9)
@@ -43,7 +44,8 @@ case $lang in
 
 *)
           # default
-          cpre="--> Chance of Precipitation"
+          cpre="--> "
+          cprec="Chance of Precipitation"
           rain="--> Rain"
           proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-9);
           proxlem=$proxlemc
@@ -224,93 +226,126 @@ case $1 in
 
           if [ $chuva == "no" ]; then
 
-
+          
+	      
               if (( $hora >= 10#0000 &&  $hora < 10#0300 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT03:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
+	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      	      
+		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
 		   echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
               elif (( $hora >= 10#0300 && $hora < 10#0600 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT06:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
-		   echo ""
+	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      
+	        if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
+		  echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
 	      elif (( $hora >= 10#0600 && $hora < 10#0900 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT09:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
+		result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	        
+	        if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
 		   echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
 	      elif (( $hora >= 10#0900 && $hora < 10#1200 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT12:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
-		   echo ""
+	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      
+		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
+		  echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
 	      elif (( $hora >= 10#1200 && $hora < 10#1500 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT15:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
+		result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      
+		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
 		   echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
 	      elif (( $hora >= 10#1500 && $hora < 10#1800 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT18:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
+	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      
+		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
 		   echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm 
 		fi
 
 	      elif (( $hora >= 10#1800 && $hora < 10#2100 )); then
 
 	        time=$(date --date="now" +%Y-%m-%dT21:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
+	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      
+		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
 		   echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
               elif (( $hora >= 2100 && $hora <= 2359 )); then
 
 	        time=$(date  --date="1 day" +%Y-%m-%dT00:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }')
-		if [[ $result == "<precipitation/>" ]]; then
+	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
+		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
+	      
+		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
 		   echo ""
 		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f4 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   echo " $cpre" $result mm
+		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
+		   
+		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
+		   echo " $cpre"$probability% $cprec $result mm
 		fi
 
               fi
