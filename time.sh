@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-07-28                     -~^    /______\`~~-^~:
+# Last modified:2020-07-30                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -30,6 +30,7 @@ case $lang in
           proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
           proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
           on="em"
+          mm="mm"
           prox="Próx"
           feels="Sensação Térmica"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6 \
@@ -51,6 +52,7 @@ case $lang in
           proxlem=$proxlemc
           proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-22)
           on="in"
+          mm="mm"
           prox="Next"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
           proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
@@ -238,9 +240,12 @@ case $1 in
 		   echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
               elif (( $hora >= 10#0300 && $hora < 10#0600 )); then
@@ -253,9 +258,12 @@ case $1 in
 		  echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
 	      elif (( $hora >= 10#0600 && $hora < 10#0900 )); then
@@ -268,9 +276,12 @@ case $1 in
 		   echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
 	      elif (( $hora >= 10#0900 && $hora < 10#1200 )); then
@@ -283,9 +294,12 @@ case $1 in
 		  echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
 	      elif (( $hora >= 10#1200 && $hora < 10#1500 )); then
@@ -298,9 +312,12 @@ case $1 in
 		   echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
 	      elif (( $hora >= 10#1500 && $hora < 10#1800 )); then
@@ -313,9 +330,12 @@ case $1 in
 		   echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm 
+		   echo " $cpre"$probability% $cprec $result $mm 
 		fi
 
 	      elif (( $hora >= 10#1800 && $hora < 10#2100 )); then
@@ -328,9 +348,12 @@ case $1 in
 		   echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
               elif (( $hora >= 2100 && $hora <= 2359 )); then
@@ -343,16 +366,19 @@ case $1 in
 		   echo ""
 		else
 		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   
+		   if [ $result == "0.00" ]; then
+		    result=""
+		    mm=""
+		   fi
 		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result mm
+		   echo " $cpre"$probability% $cprec $result $mm
 		fi
 
               fi
 
           else
 
-              echo " $rain" $chuva mm
+              echo " $rain" $chuva $mm
 
           fi
           ;;
