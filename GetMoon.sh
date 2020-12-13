@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-02-07                     -~^    /______\`~~-^~:
+# Last modified:2020-12-10                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -64,7 +64,7 @@ moonrise_set () {
 
 
 
-wget -O ${DirShell}/raw "http://www.moongiant.com/phase/today" > /dev/null 2>&1
+wget -q -O ${DirShell}/raw "http://www.moongiant.com/phase/today" > /dev/null 2>&1
 
 
 [ -f ${DirShell}/moon_tmp.jpg ] && rm ${DirShell}/moon_tmp.jpg
@@ -79,10 +79,10 @@ sed -i -e 's/"\]};//g' -e 's/^.*today_phase\///g' -e 's/\.jpg.*$//g' ${DirShell}
 phase=$(sed -n 7p ${DirShell}/raw|sed 's/ //')
 mrise_mset=$(moonrise_set $phase)
 sed -i 7a$(moonrise_set $phase) ${DirShell}/raw
-img_in=$(sed -n 49p ${DirShell}/raw)
+img_in=$(sed -n 50p ${DirShell}/raw)
 
 #wget --output-document=${DirShell}/moon_tmp.jpg https://static.die.net/moon/210.jpg > /dev/null 2>&1
-wget --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
+wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
 sleep 1
 # mirror moon image, hemisphere south
 if [[ $hemisphere == s ]]; then
