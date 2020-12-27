@@ -9,7 +9,9 @@ _ _ _
 - - -
 - - -
 * * *
-![print3](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_3.jpg)	******       ********	![print5](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_5.jpg)
+![print6](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_6.png)
+* * *
+![print3](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_3.jpg)	****** ![print5](https://raw.githubusercontent.com/wekers/conky/master/printscreen/print_1080p_5.jpg)
 
 * * *
 ##### PrintScreen 1920x1080p:
