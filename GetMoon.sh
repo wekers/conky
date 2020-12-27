@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-12-26                     -~^    /______\`~~-^~:
+# Last modified:2020-12-27                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -23,9 +23,6 @@ lang="pt-br"
 # n for north
 # s for south
 hemisphere=s
-
-# set Moon dark or light
-moon=dark
 
 # ****************************
 
@@ -88,15 +85,24 @@ phase=$(sed -n 7p ${DirShell}/raw|sed 's/ //')
 mrise_mset=$(moonrise_set $phase)
 sed -i 7a$(moonrise_set $phase) ${DirShell}/raw
 img_in=$(sed -n 50p ${DirShell}/raw)
+now=$(date --date="now" +%H)
 
 
 
 # Moon image
-if [[ $moon == dark ]]; then
+if [[ $now >=18 || $now < 06 ]]; then
+  
+# day moon -> more light
+  sleep 1
+  wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
 
-# moon -> dark
+
+else
+
+# night moon -> dark
 # Can't download direct with wget
 # To get moon image -> Pass Cloudflare DDOS Protection
+  sleep 1
   curl https://static.die.net/moon/210.jpg --output "${DirShell}"/moon_tmp.jpg \
     -H 'Host: static.die.net' \
     -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:33.0) Gecko/20100101 Firefox/33.0' \
@@ -105,11 +111,6 @@ if [[ $moon == dark ]]; then
     -H 'Referer: https://static.die.net/moon' \
     -H 'Connection: keep-alive' --compressed 
     
-else
-
-# moon -> more light
-  wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
-
 fi
 
 
