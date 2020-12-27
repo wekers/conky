@@ -5,12 +5,13 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-12-10                     -~^    /______\`~~-^~:
+# Last modified:2020-12-26                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
 # -------------------------------------------------------------------
 
+# ****************************
 
 # Working directory
 DirShell="$HOME/.conky/wekers"
@@ -18,8 +19,15 @@ DirShell="$HOME/.conky/wekers"
 # set language
 lang="pt-br"
 
-#put your hemisphere here: n for north, s for south
+# put your hemisphere here:
+# n for north
+# s for south
 hemisphere=s
+
+# set Moon dark or ligth
+moon=dark
+
+# ****************************
 
 
 # function: moonrise_set
@@ -81,9 +89,33 @@ mrise_mset=$(moonrise_set $phase)
 sed -i 7a$(moonrise_set $phase) ${DirShell}/raw
 img_in=$(sed -n 50p ${DirShell}/raw)
 
-#wget --output-document=${DirShell}/moon_tmp.jpg https://static.die.net/moon/210.jpg > /dev/null 2>&1
-wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
+
+
+# Moon image
+if [[ $moon == dark ]]; then
+
+# moon -> dark
+# Can't donwload direct with wget
+# To get moon image -> Pass Cloudflare DDOS Protection
+  curl https://static.die.net/moon/210.jpg --output "${DirShell}"/moon_tmp.jpg \
+    -H 'Host: static.die.net' \
+    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:33.0) Gecko/20100101 Firefox/33.0' \
+    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
+    -H 'Accept-Language: en-US,en;q=0.5' \
+    -H 'Referer: https://static.die.net/moon' \
+    -H 'Connection: keep-alive' --compressed 
+    
+else
+
+# moon -> more light
+  wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
+
+fi
+
+
+
 sleep 1
+
 # mirror moon image, hemisphere south
 if [[ $hemisphere == s ]]; then
   convert -flop -colorspace rgb ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
@@ -108,6 +140,7 @@ if [[ $lang == "pt-br" ]]; then
 
 fi
 
+# exec too
 sh ${DirShell}/lune_die.sh > /dev/null 2>&1
 
 #EOF
