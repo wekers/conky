@@ -24,7 +24,7 @@ lang="pt-br"
 # s for south
 hemisphere=s
 
-# set Moon dark or ligth
+# set Moon dark or light
 moon=dark
 
 # ****************************
@@ -95,7 +95,7 @@ img_in=$(sed -n 50p ${DirShell}/raw)
 if [[ $moon == dark ]]; then
 
 # moon -> dark
-# Can't donwload direct with wget
+# Can't download direct with wget
 # To get moon image -> Pass Cloudflare DDOS Protection
   curl https://static.die.net/moon/210.jpg --output "${DirShell}"/moon_tmp.jpg \
     -H 'Host: static.die.net' \
