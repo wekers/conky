@@ -225,6 +225,11 @@ _ _ _
 
 ###### **see on terminal if work** `nc localhost 7634`
 
+######other distribution like Slackware, put on `/etc/rc.d/rc.local`
+```cmake
+/usr/sbin/hddtemp -d -l 127.0.0.1 -p 7634 /dev/sda /dev/sdb
+```
+
 * * *
 
 
