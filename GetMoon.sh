@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-12-27                     -~^    /______\`~~-^~:
+# Last modified:2021-01-19                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -26,74 +26,33 @@ hemisphere=s
 
 # ****************************
 
-
-# function: moonrise_set
-moonrise_set () {
-    case "$1" in
-                "FirstQuarter")
-                   echo "Noon/Midnight"
-                ;;
-
-                "FullMoon")
-                   echo "6PM/6AM"
-                ;;
-
-                "LastQuarter")
-                   echo "Midnight/Noon"
-                ;;
-
-                "NewMoon")
-                   echo "6AM/6PM"
-                ;;
-
-                "WaningCrescent")
-                   echo "3AM/3PM"
-                ;;
-
-                "WaningGibbous")
-                   echo "9PM/9AM"
-                ;;
-
-                "WaxingCrescent")
-                   echo "9AM/9PM"
-                ;;
-
-                "WaxingGibbous")
-                   echo "3PM/3AM"
-                ;;
-
-                *)
-                   echo "Unavailable"
-        esac
-}
-
-
-
 wget -q -O ${DirShell}/raw "http://www.moongiant.com/phase/today" > /dev/null 2>&1
-
+wget -q -O ${DirShell}/ico "http://www.moongiant.com/phase/today" > /dev/null 2>&1
 
 [ -f ${DirShell}/moon_tmp.jpg ] && rm ${DirShell}/moon_tmp.jpg
 [ -f ${DirShell}/moon.jpg ] && rm ${DirShell}/moon.jpg
 
+
+
+
 sed -i -e '/^ *$/d' -e 's/^ *//g' ${DirShell}/raw
-sed -i '/var jArray=\|"todayMoonContainer"/!d' ${DirShell}/raw
-sed -i -e '/var jArray/s/","/\n/g' -e 's/<span>\|<b>\|<\\\/span>\|<\\\/b>\|\\n//g' ${DirShell}/raw
-sed -i 's/"\].*\[\"/\n/g' ${DirShell}/raw
-sed -i '/var jArray/d' ${DirShell}/raw
-sed -i -e 's/"\]};//g' -e 's/^.*today_phase\///g' -e 's/\.jpg.*$//g' ${DirShell}/raw
-phase=$(sed -n 7p ${DirShell}/raw|sed 's/ //')
-mrise_mset=$(moonrise_set $phase)
-sed -i 7a$(moonrise_set $phase) ${DirShell}/raw
-img_in=$(sed -n 50p ${DirShell}/raw)
+sed -i '/Illumination/!d' ${DirShell}/raw
+sed -i 's/<br>/\n/g' ${DirShell}/raw
+sed -i 's|<[^>]*>||g' ${DirShell}/raw
+sed -i -e '4d' ${DirShell}/raw
+
+#ico name
+sed -i '/var jArray=\|"todayMoonContainer"/!d' ${DirShell}/ico
+sed -i -e 's/"\]};//g' -e 's/^.*today_phase\///g' -e 's/\.jpg.*$//g' ${DirShell}/ico
+img_in=$(sed -n 1p ${DirShell}/ico)
+
 now=$(date --date="now" +%H)
-
-
+sleep 1
 
 # Moon image
 if [[ $now >=18 || $now < 06 ]]; then
   
 # day moon -> more light
-  sleep 1
   wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
 
 
@@ -102,7 +61,6 @@ else
 # night moon -> dark
 # Can't download direct with wget
 # To get moon image -> Pass Cloudflare DDOS Protection
-  sleep 1
   curl https://static.die.net/moon/210.jpg --output "${DirShell}"/moon_tmp.jpg \
     -H 'Host: static.die.net' \
     -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:33.0) Gecko/20100101 Firefox/33.0' \

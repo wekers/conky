@@ -5,7 +5,7 @@
 # File: .conkyrc                                         /\
 # Type: conky main file                                 /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-11-16                     -~^    /______\`~~-^~:
+# Last modified:2021-01-19                     -~^    /______\`~~-^~:
 # ------------------------
 # Main File to Run
 # / OS : $Linux, $FreeBSD (X Window)
@@ -94,7 +94,7 @@ ${voffset 2}${font Liberation Sans:size=7:style=bold}${color 3cbf9a} --> ${color
 ${voffset -3}${font Liberation Sans:size=7:style=bold}${color 77bfe5}${execi 130 sh ~/.conky/wekers/time.sh precipitation}
 # Moon part
 ${voffset -4}${color 666666}${hr}${color}
-${font Liberation Sans:size=7:style=bold}${goto 52}${voffset 15}${color ecdfdd}${execi 600 sh ~/.conky/wekers/GetMoon.sh }${execi 180 grep -C6 "Illumination" ~/.conky/wekers/raw | tail -n 1} ${execi 610 grep "Illumination" ~/.conky/wekers/raw | cut -d':' -f2 | sed 's/^ *//g'}
+${font Liberation Sans:size=7:style=bold}${goto 52}${voffset 15}${color ecdfdd}${execi 600 sh ~/.conky/wekers/GetMoon.sh }${execi 180 sed -n -e '2p' ~/.conky/wekers/raw} ${execi 610 grep "Illumination" ~/.conky/wekers/raw | cut -d':' -f2 | sed 's/^ *//g'}
 ${font Liberation Sans:size=7:style=bold}${goto 165}${voffset -23}${color 667733}${execi 620 sh ~/.conky/wekers/time.sh mnext}
 ${goto 165}${voffset 12}${color 669866}${execi 630 sh ~/.conky/wekers/time.sh mnextfull}${color}
 ${image ~/.conky/wekers/moon.jpg -p 07,121 -s 37x37 -n}${execi 320 sh ~/.conky/wekers/lune_die.sh > /dev/null 2>&1}
