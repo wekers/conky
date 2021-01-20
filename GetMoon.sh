@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2021-01-19                     -~^    /______\`~~-^~:
+# Last modified:2021-01-20                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -27,12 +27,11 @@ hemisphere=s
 # ****************************
 
 wget -q -O ${DirShell}/raw "http://www.moongiant.com/phase/today" > /dev/null 2>&1
-wget -q -O ${DirShell}/ico "http://www.moongiant.com/phase/today" > /dev/null 2>&1
+sleep 1
+cp ${DirShell}/raw ${DirShell}/ico
 
 [ -f ${DirShell}/moon_tmp.jpg ] && rm ${DirShell}/moon_tmp.jpg
 [ -f ${DirShell}/moon.jpg ] && rm ${DirShell}/moon.jpg
-
-
 
 
 sed -i -e '/^ *$/d' -e 's/^ *//g' ${DirShell}/raw
@@ -44,10 +43,11 @@ sed -i -e '4d' ${DirShell}/raw
 #ico name
 sed -i '/var jArray=\|"todayMoonContainer"/!d' ${DirShell}/ico
 sed -i -e 's/"\]};//g' -e 's/^.*today_phase\///g' -e 's/\.jpg.*$//g' ${DirShell}/ico
-img_in=$(sed -n 1p ${DirShell}/ico)
-
+cat  ${DirShell}/ico >> ${DirShell}/raw
+img_in=$(sed -n 4p ${DirShell}/raw)
+[ -f ${DirShell}/ico ] && rm  ${DirShell}/ico
 now=$(date --date="now" +%H)
-sleep 1
+
 
 # Moon image
 if [[ $now >=18 || $now < 06 ]]; then
@@ -73,7 +73,6 @@ fi
 
 
 
-sleep 1
 
 # mirror moon image, hemisphere south
 if [[ $hemisphere == s ]]; then
