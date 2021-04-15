@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2020-07-30                     -~^    /______\`~~-^~:
+# Last modified:2021-04-14                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -97,37 +97,37 @@ case $1 in
 
       1max)
 	  time=$(date --date="1 day" +%Y-%m-%dT15:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
+	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       2max)
 	  time=$(date --date="2 day" +%Y-%m-%dT15:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
+	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       3max)
 	  time=$(date --date="3 day" +%Y-%m-%dT15:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
+	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       1min)
 	  time=$(date --date="1 day" +%Y-%m-%dT06:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
+	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       2min)
 	  time=$(date --date="2 day" +%Y-%m-%dT06:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
+	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       3min)
 	  time=$(date --date="3 day" +%Y-%m-%dT06:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
+	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
