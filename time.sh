@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2021-04-14                     -~^    /______\`~~-^~:
+# Last modified:2020-12-10                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -32,7 +32,7 @@ case $lang in
           on="em"
           mm="mm"
           prox="Próx"
-          feels="Sensação Térmica"
+          feels="Sensação  Térmica"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6 \
 			     | sed -e 's/Light breeze/Brisa Leve/g' \
 			     | sed -e 's/Moderate breeze/Brisa Moderada/g' \
@@ -56,7 +56,7 @@ case $lang in
           prox="Next"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
           proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
-          feels="Feels Like"
+          feels="	Feels Like"
           ;;
 
 esac
@@ -98,35 +98,41 @@ case $1 in
       1max)
 	  time=$(date --date="1 day" +%Y-%m-%dT15:00:00)
 	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
+	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       2max)
 	  time=$(date --date="2 day" +%Y-%m-%dT15:00:00)
 	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
+	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       3max)
 	  time=$(date --date="3 day" +%Y-%m-%dT15:00:00)
 	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
+	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       1min)
 	  time=$(date --date="1 day" +%Y-%m-%dT06:00:00)
+	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
 	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       2min)
 	  time=$(date --date="2 day" +%Y-%m-%dT06:00:00)
+	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
 	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
 	  echo "$result"
           ;;
 
       3min)
 	  time=$(date --date="3 day" +%Y-%m-%dT06:00:00)
+	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
 	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
 	  echo "$result"
           ;;
@@ -198,7 +204,8 @@ case $1 in
 
       at)
           # Apparent temp calc
-          temper=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6)
+          #temper=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6)
+          temper=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
           wspeed=$(grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
           rh=$(grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
           rhcalc=$(echo "$rh/100" | bc -l)
@@ -213,8 +220,8 @@ case $1 in
 	  echo $feels
 	  ;;
 
-       temp)
-	  temperature=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6 | awk '{print int($1+0.5)}')
+       temp) #f6 to -> f2
+	  temperature=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1+0.5)}')
 	  echo "$temperature"
        ;;
 
