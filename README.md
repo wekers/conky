@@ -193,7 +193,7 @@ brew link gettext --force
 - - -
 * * *
 
-##### P.S.: Some CPU's get error in temperature. to fix:
+##### P.S.: Some CPU's get error in temperature. Because hwmon0 is different in each kernel version or motherboard --> to fix:
 
 ```lua
 -- CPU and mainboard temperature
@@ -209,14 +209,53 @@ function conky_temperature (sensor)
 end
 ```
 
+**Know where is the locate of "coretemp":**
+
+```cmake
+# on terminal run:
+find -L /sys/class/hwmon/hwmon* -maxdepth 1 -regextype posix-awk -regex '.*name' -exec echo -n '{}=' ';' -exec cat '{}' ';' 2>/dev/null | sed 's|/sys/class/hwmon/hwmon||;s|/name||;s| |_|g;s|_| |;s|=|=|;s|$||' | sort
+```
+###### **return eg:**
+```bash
+0=nvme
+1=coretemp
+2=it8772
+```
+
 ##### Change in file **conky.lua**
 ```lua
 ${hwmon temp 2}
 ```
 to
 ```lua
-${hwmon temp 1}
+${hwmon 1 temp 1}
 ```
+---
+Make sure you have run ``` sensors-detect ``` and put modules to load in /etc/rc.d/rc.modules.local or /etc/modules
+
+
+```cmake
+# but what is "temp 1" or "temp 2" i have to change? to get sure.
+# Run
+find -L /sys/class/hwmon/hwmon* -maxdepth 1 -regextype posix-awk -regex '.*(name|temp[1-9])*(label)' -exec echo -n '{}=' ';' -exec cat '{}' ';' 2>/dev/null | sort
+
+```
+###### **return eg:**
+```bash
+/sys/class/hwmon/hwmon0/temp1_label=Composite
+/sys/class/hwmon/hwmon1/temp1_label=Package id 0 // <- "Package id 0" is one temp of all cpu's
+/sys/class/hwmon/hwmon1/temp2_label=Core 0
+/sys/class/hwmon/hwmon1/temp3_label=Core 1
+/sys/class/hwmon/hwmon1/temp4_label=Core 2
+/sys/class/hwmon/hwmon1/temp5_label=Core 3
+/sys/class/hwmon/hwmon1/temp6_label=Core 4
+/sys/class/hwmon/hwmon1/temp7_label=Core 5
+/sys/class/hwmon/hwmon1/temp8_label=Core 6
+/sys/class/hwmon/hwmon1/temp9_label=Core 7
+/sys/class/hwmon/hwmon2/in7_label=3VSB
+/sys/class/hwmon/hwmon2/in8_label=Vbat
+```
+
 _ _ _
 
 ##### hddtemp issue, to fix:
@@ -231,5 +270,33 @@ _ _ _
 ```
 
 * * *
+* * *
+* * *
+
+**Recently i have installed on Ubuntu 21.10**
+
+***What i do:***
+
+change dash to bash:
+ls -l /bin/sh
+sudo rm sh
+sudo ln -s /bin/bash /bin/sh
 
 
+sudo apt-get install libxml2-utils
+sudo apt install curl
+sudo apt install imagemagick
+sudo apt install lm-sensors
+apt-get install cmake libimlib2-dev libncurses5-dev libx11-dev libxdamage-dev libxft-dev libxinerama-dev libxml2-dev libxext-dev libcurl4-openssl-dev liblua5.3-dev
+
+sudo sensors-detect
+
+
+sudo apt-get remove --purge conky-std conky-all conky-cli
+wget http://old-releases.ubuntu.com/ubuntu/pool/universe/c/conky/conky-all_1.9.0-6build1_amd64.deb
+sudo apt-get install gdebi
+sudo gdebi conky-all_1.9.0-6build1_amd64.deb
+sudo apt-mark hold conky-all
+chmod +x ~/.conky/wekers/time.sh
+chmod +x ~/.conky/wekers/GetMoon.sh
+chmod +x ~/.conky/wekers/lune_die.sh
