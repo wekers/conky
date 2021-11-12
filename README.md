@@ -291,8 +291,10 @@ sudo apt install imagemagick
 sudo apt install lm-sensors
 apt-get install cmake libimlib2-dev libncurses5-dev libx11-dev libxdamage-dev libxft-dev libxinerama-dev libxml2-dev libxext-dev libcurl4-openssl-dev liblua5.3-dev
 ```
+
 ```bash
-sudo sensors-detect```
+sudo sensors-detect
+```
 
 ```bash
 sudo apt-get remove --purge conky-std conky-all conky-cli
