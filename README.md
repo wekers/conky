@@ -277,21 +277,24 @@ _ _ _
 
 ***What i do:***
 
+```bash
 change dash to bash:
 ls -l /bin/sh
 sudo rm sh
 sudo ln -s /bin/bash /bin/sh
+```
 
-
+```bash
 sudo apt-get install libxml2-utils
 sudo apt install curl
 sudo apt install imagemagick
 sudo apt install lm-sensors
 apt-get install cmake libimlib2-dev libncurses5-dev libx11-dev libxdamage-dev libxft-dev libxinerama-dev libxml2-dev libxext-dev libcurl4-openssl-dev liblua5.3-dev
+```
+```bash
+sudo sensors-detect```
 
-sudo sensors-detect
-
-
+```bash
 sudo apt-get remove --purge conky-std conky-all conky-cli
 wget http://old-releases.ubuntu.com/ubuntu/pool/universe/c/conky/conky-all_1.9.0-6build1_amd64.deb
 sudo apt-get install gdebi
@@ -300,3 +303,4 @@ sudo apt-mark hold conky-all
 chmod +x ~/.conky/wekers/time.sh
 chmod +x ~/.conky/wekers/GetMoon.sh
 chmod +x ~/.conky/wekers/lune_die.sh
+```
