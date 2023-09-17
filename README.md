@@ -306,3 +306,18 @@ chmod +x ~/.conky/wekers/time.sh
 chmod +x ~/.conky/wekers/GetMoon.sh
 chmod +x ~/.conky/wekers/lune_die.sh
 ```
+
+* * *
+# **Update in 17/09/23**
+**get next 'Full Moon' and next 'New Moon'**
+
+in file `lune_die.sh`
+
+blocked, because now `https://www.die.net/moon/` requires cookies and javascript <br>
+so to bypass die.net restriction<br>
+create account on https://www.scraping-bot.io it's free<br>
+substitue below in file `lune_die.sh` Line 31, 32 with your username and your api_key<br>
+```bash
+username='your username'
+api_key='your apikey'
+```
