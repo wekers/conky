@@ -40,28 +40,30 @@ curl -X POST \
   -o ${DirShell}/moon_cal_die
 
   
-touch ${DirShell}/moon_phase_die
+touch ${DirShell}/moon_phase_die_tmp
 
-egrep -i '</td></tr>|<img src=|<small>' ${DirShell}/moon_cal_die > ${DirShell}/moon_phase_die
-sed -i -e '1,1d' ${DirShell}/moon_phase_die # remove first line
-sed -i 's/&nbsp;/ /g' ${DirShell}/moon_phase_die
-sed -i 's/, /\n/g' ${DirShell}/moon_phase_die
-sed -i 's/<img src="/\n/g' ${DirShell}/moon_phase_die
-sed -i 's/" alt="/\n/g' ${DirShell}/moon_phase_die
-sed -i 's/\[/</g' ${DirShell}/moon_phase_die
-sed -i 's|<[^>]*>||g' ${DirShell}/moon_phase_die
-sed -i -e'/^$/d' ${DirShell}/moon_phase_die
+egrep -i '</td></tr>|<img src=|<small>' ${DirShell}/moon_cal_die > ${DirShell}/moon_phase_die_tmp
+sed -i -e '1,1d' ${DirShell}/moon_phase_die_tmp # remove first line
+sed -i 's/&nbsp;/ /g' ${DirShell}/moon_phase_die_tmp
+sed -i 's/, /\n/g' ${DirShell}/moon_phase_die_tmp
+sed -i 's/<img src="/\n/g' ${DirShell}/moon_phase_die_tmp
+sed -i 's/" alt="/\n/g' ${DirShell}/moon_phase_die_tmp
+sed -i 's/\[/</g' ${DirShell}/moon_phase_die_tmp
+sed -i 's|<[^>]*>||g' ${DirShell}/moon_phase_die_tmp
+sed -i -e'/^$/d' ${DirShell}/moon_phase_die_tmp
 
-sed -i -e '1,4d' ${DirShell}/moon_phase_die
-sed -i -e '2d' ${DirShell}/moon_phase_die
-sed -i -e '3,4d' ${DirShell}/moon_phase_die
-sed -i -e '4d' ${DirShell}/moon_phase_die
-sed -i -e '5,6d' ${DirShell}/moon_phase_die
-sed -i -e 's/(GMT)//g' ${DirShell}/moon_phase_die
-sed -i -e 's/Next://g' ${DirShell}/moon_phase_die
-sed -i -e 's/at.*//' ${DirShell}/moon_phase_die 
+sed -i -e '1,4d' ${DirShell}/moon_phase_die_tmp
+sed -i -e '2d' ${DirShell}/moon_phase_die_tmp
+sed -i -e '3,4d' ${DirShell}/moon_phase_die_tmp
+sed -i -e '4d' ${DirShell}/moon_phase_die_tmp
+sed -i -e '5,6d' ${DirShell}/moon_phase_die_tmp
+sed -i -e 's/(GMT)//g' ${DirShell}/moon_phase_die_tmp
+sed -i -e 's/Next://g' ${DirShell}/moon_phase_die_tmp
+sed -i -e 's/at.*//' ${DirShell}/moon_phase_die_tmp
 
-[ -f ${DirShell}/moon_cal_die ] && rm ${DirShell}/moon_cal_die
+/usr/bin/cp ${DirShell}/moon_phase_die_tmp ${DirShell}/moon_phase_die
+[ -f ${DirShell}/moon_cal_die ] && /usr/bin/rm ${DirShell}/moon_cal_die
+[ -f ${DirShell}/moon_phase_die_tmp ] && /usr/bin/rm ${DirShell}/moon_phase_die_tmp
 
 
 
