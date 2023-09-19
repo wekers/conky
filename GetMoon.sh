@@ -5,7 +5,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2023-09-18                     -~^    /______\`~~-^~:
+# Last modified:2023-09-19                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -50,30 +50,31 @@ now=$(date --date="now" +%H)
 
 
 # Moon image
-#if [[ $now >=18 || $now < 06 ]]; then
+if [[ $now >=18 || $now < 06 ]]; then
   
-# day moon -> more light
+  # night moon -> more light
   wget -q --output-document=${DirShell}/moon_tmp.jpg https://www.moongiant.com/images/today_phase/$img_in.jpg > /dev/null 2>&1
 
 
-#else
+else
 
-# night moon -> dark
-# Can't download direct with wget
-# To get moon image -> Pass Cloudflare DDOS Protection
+  # day moon -> more dark
+  wget -q -O ${DirShell}/get_moon_icon_tmp "https://moon.nasa.gov/moon-observation/daily-moon-guide/" > /dev/null 2>&1
+  #sed -i -e 's/\(.*\)/\L\1/' ${DirShell}/get_moon_icon_tmp # transform all lowercase
 
-#curl https://static.die.net/moon/210.jpg --output "${DirShell}"/moon_tmp.jpg \
-#    -H 'Host: static.die.net' \
-#    -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:33.0) Gecko/20100101 Firefox/33.0' \
-#    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' \
-#    -H 'Accept-Language: en-US,en;q=0.5' \
-#    -H 'Referer: https://static.die.net/moon' \
-#    -H 'Connection: keep-alive' --compressed > /dev/null 2>&1 &
-    
-#fi
+  now_ico="$(LANG=en_us_88591 date +'%d %b %Y')"
+  
+  grep -E -o "${now_ico}.{0,428}" ${DirShell}/get_moon_icon_tmp | \
+  sed 's/&quot;/ /g'| sed 's/, /\n/g' | sed -e '2,13d' | sed 's/image_src ://g' | \
+  sed 's/^ *//g' | sed 's/\.jpg.*/.jpg/' > ${DirShell}/get_moon_icon
+  
+  img_ico=$(sed -n 2p ${DirShell}/get_moon_icon)
 
+  wget -q --output-document=${DirShell}/moon_tmp.jpg https://moon.nasa.gov/$img_ico > /dev/null 2>&1
 
-
+  [ -f ${DirShell}/get_moon_icon_tmp ] && rm  ${DirShell}/get_moon_icon_tmp
+  
+fi
 
 
 
@@ -91,8 +92,8 @@ if [[ $lang == "pt-br" ]]; then
 
 fi
 
+
 # exec too
 sh ${DirShell}/lune_die.sh > /dev/null 2>&1
 
 #EOF
-
