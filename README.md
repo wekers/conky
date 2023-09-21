@@ -308,16 +308,15 @@ chmod +x ~/.conky/wekers/lune_die.sh
 ```
 
 * * *
-# **Update in 17/09/23**
+# **Update in 21/09/23**
 **get next 'Full Moon' and next 'New Moon'**
 
-in file `lune_die.sh`
+altered script to get data in `lune_die.sh`, because was blocked, now https://www.die.net/moon/ requires cookies and javascript to do wget directly<br>
+so i decided to remove then, now was new file `moon.pl`<br>
 
-blocked, because now `https://www.die.net/moon/` requires cookies and javascript <br>
-so to bypass die.net restriction<br>
-create account on https://www.scraping-bot.io it's free<br>
-substitue below in file `lune_die.sh` Line 31, 32 with your username and your api_key<br>
+Get Moon data from perl module `Astro::MoonPhase`<br>
+with ```su``` or ```sudo```<br>
+In terminal you need to install perl module by:<br>
 ```bash
-username='your username'
-api_key='your apikey'
+perl -MCPAN -e 'install Astro::MoonPhase'
 ```
