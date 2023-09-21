@@ -5,7 +5,7 @@
 # File: lune_die.sh                                      /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2023-09-17                     -~^    /______\`~~-^~:
+# Last modified:2023-09-21                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -23,49 +23,9 @@ hemisphere="s"
 DirShell="$HOME/.conky/wekers"
 
 
-# blocked, because now requires cookies and javascript
-# so bypass die.net
-# create account on https://www.scraping-bot.io
-# substitue below with your username and your api_key
-url='https://www.die.net/moon/'
-username='your username'
-api_key='your apikey'
-auth=$(echo -ne "$username:$api_key" | base64);
+touch ${DirShell}/moon_phase_die
 
-curl -X POST \
-  http://api.scraping-bot.io/scrape/raw-html \
-  -H "Authorization: Basic $auth" \
-  -H "Content-Type: application/json" \
-  -d "{\"url\":\"$url\"}" \
-  -o ${DirShell}/moon_cal_die
-
-  
-touch ${DirShell}/moon_phase_die_tmp
-
-egrep -i '</td></tr>|<img src=|<small>' ${DirShell}/moon_cal_die > ${DirShell}/moon_phase_die_tmp
-sed -i -e '1,1d' ${DirShell}/moon_phase_die_tmp # remove first line
-sed -i 's/&nbsp;/ /g' ${DirShell}/moon_phase_die_tmp
-sed -i 's/, /\n/g' ${DirShell}/moon_phase_die_tmp
-sed -i 's/<img src="/\n/g' ${DirShell}/moon_phase_die_tmp
-sed -i 's/" alt="/\n/g' ${DirShell}/moon_phase_die_tmp
-sed -i 's/\[/</g' ${DirShell}/moon_phase_die_tmp
-sed -i 's|<[^>]*>||g' ${DirShell}/moon_phase_die_tmp
-sed -i -e'/^$/d' ${DirShell}/moon_phase_die_tmp
-
-sed -i -e '1,4d' ${DirShell}/moon_phase_die_tmp
-sed -i -e '2d' ${DirShell}/moon_phase_die_tmp
-sed -i -e '3,4d' ${DirShell}/moon_phase_die_tmp
-sed -i -e '4d' ${DirShell}/moon_phase_die_tmp
-sed -i -e '5,6d' ${DirShell}/moon_phase_die_tmp
-sed -i -e 's/(GMT)//g' ${DirShell}/moon_phase_die_tmp
-sed -i -e 's/Next://g' ${DirShell}/moon_phase_die_tmp
-sed -i -e 's/at.*//' ${DirShell}/moon_phase_die_tmp
-
-/usr/bin/cp ${DirShell}/moon_phase_die_tmp ${DirShell}/moon_phase_die
-[ -f ${DirShell}/moon_cal_die ] && /usr/bin/rm ${DirShell}/moon_cal_die
-[ -f ${DirShell}/moon_phase_die_tmp ] && /usr/bin/rm ${DirShell}/moon_phase_die_tmp
-
-
+perl moon.pl
 
 # Translate pt-br
 if [[ $lang == "pt-br" ]]; then
