@@ -5,7 +5,7 @@
 # File: lune_die.sh                                      /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2023-09-21                     -~^    /______\`~~-^~:
+# Last modified:2023-10-13                     -~^    /______\`~~-^~:
 # ------------------------
 # Get Moon data from moongiant.com
 # / OS : $Linux, $FreeBSD (X Window)
@@ -22,11 +22,12 @@ hemisphere="s"
 # Working directory
 DirShell="$HOME/.conky/wekers"
 
-
+cd ${DirShell}
 touch ${DirShell}/moon_phase_die
 
 perl moon.pl
 
+sleep 3
 # Translate pt-br
 if [[ $lang == "pt-br" ]]; then
 	  sed -i -e 's/New Moon/Lua Nova/g' ${DirShell}/moon_phase_die
