@@ -331,6 +331,6 @@ perl -MCPAN -e 'install Astro::MoonPhase'
 #
 **printScreen:** 
 <br/>
-![print 2k](https://raw.githubusercontent.com/wekers/conky/master/printScreen-2k.png)
+![print 2k](https://raw.githubusercontent.com/wekers/conky/refs/heads/master/printscreen/printScreen-2k.png)
 
 * * *
