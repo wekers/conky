@@ -308,7 +308,7 @@ chmod +x ~/.conky/wekers/lune_die.sh
 ```
 
 * * *
-# **Update in 21/09/23**
+## **Update in 2023/09/21**
 **get next 'Full Moon' and next 'New Moon'**
 
 altered script to get data in `lune_die.sh`, because was blocked, now https://www.die.net/moon/ requires cookies and javascript to do wget directly<br>
@@ -320,3 +320,17 @@ In terminal you need to install perl module by:<br>
 ```bash
 perl -MCPAN -e 'install Astro::MoonPhase'
 ```
+* * *
+## **Update in 2024/02/23**
+**file:** `.conkyrc_2k` for 2k monitor
+
+**add info:**
+- Cloud cover
+- Cpu Cores
+- Cpu Threads
+#
+**printScreen:** 
+<br/>
+![print 2k](https://raw.githubusercontent.com/wekers/conky/master/printScreen-2k.png)
+
+* * *
