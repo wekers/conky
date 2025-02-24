@@ -321,7 +321,7 @@ In terminal you need to install perl module by:<br>
 perl -MCPAN -e 'install Astro::MoonPhase'
 ```
 * * *
-## **Update in 2024/02/23**
+## **Update in 2025/02/23**
 **file:** `.conkyrc_2k` for 2k monitor
 
 **add info:**
