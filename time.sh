@@ -4,7 +4,7 @@
 # File: time.sh                                          /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2023-09-30                     -~^    /______\`~~-^~:
+# Last modified:2025-02-23                     -~^    /______\`~~-^~:
 # ------------------------
 # Manipulate data of weather
 # / OS : $Linux, $FreeBSD (X Window)
@@ -33,6 +33,7 @@ case $lang in
           mm="mm"
           prox="Próx"
           feels="Sensação  Térmica"
+          cloud_text="Cobertura de Nuvens"
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6 \
 			     | sed -e 's/Light breeze/Brisa Leve/g' \
 			     | sed -e 's/Moderate breeze/Brisa Moderada/g' \
@@ -57,6 +58,7 @@ case $lang in
           windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
           proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
           feels="	Feels Like"
+#           cloud_text="Clouds Cover"
           ;;
 
 esac
@@ -223,6 +225,15 @@ case $1 in
        temp) #f6 to -> f2
 	  temperature=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1+0.5)}')
 	  echo "$temperature"
+       ;;
+       
+       clouds)
+	  cloud=$(grep "clouds" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
+	  echo "$cloud"
+       ;;
+       
+       cloudtext)
+	   echo $cloud_text
        ;;
 
        precipitation)
@@ -395,3 +406,4 @@ case $1 in
 esac
 
 #EOF
+
