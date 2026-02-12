@@ -137,7 +137,7 @@ case "$1" in
     # - For all other conditions, numeric weather code maps directly to icons.
     img)
 	img_code=$(xml_current "number" | cut -d'"' -f2)
-	icon_code=$(xml_current "icon" | cut -d'"' -f2)
+	icon_code=$(xml_current "icon" | cut -d'"' -f6)
 
 	if [[ "$img_code" =~ ^80[0-3]$ ]]; then
 	    # clear / few clouds → use icon attribute (01d, 02n, 03d, 04n…)
