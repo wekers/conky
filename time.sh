@@ -3,7 +3,7 @@
 # File: time.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-01-31
+# Last modified: 2026-02-12
 # -------------------------------------------------------------------
 # Weather and Moon data manipulation for Conky
 # Compatible with Linux / FreeBSD
@@ -131,12 +131,23 @@ esac
 
 case "$1" in
 
+    # Weather icon logic:
+    # - For codes 800–803 (clear / few clouds), OpenWeatherMap icon attribute
+    #   provides the correct visual representation (01d, 02n, 03d, 04n).
+    # - For all other conditions, numeric weather code maps directly to icons.
     img)
-        img_code=$(xml_current "number" | cut -d'"' -f2)
-        if [[ ! "$img_code" =~ ^80[0-3]$ ]]; then
-            cp -f "$DirShell/images/$img_code.png" ~/.cache/weather.png
-        fi
-        ;;
+	img_code=$(xml_current "number" | cut -d'"' -f2)
+	icon_code=$(xml_current "icon" | cut -d'"' -f2)
+
+	if [[ "$img_code" =~ ^80[0-3]$ ]]; then
+	    # clear / few clouds → use icon attribute (01d, 02n, 03d, 04n…)
+	    cp -f "${DirShell}/images/${icon_code}.png" ~/.cache/weather.png
+	else
+	    # other conditions, numeric code
+	    cp -f "${DirShell}/images/${img_code}.png" ~/.cache/weather.png
+	fi
+	;;
+
 
     dir)
 	result=$(xml_current "direction" | awk -F'"' 'NF>=4 {print $4}' | tr '[:lower:]' '[:upper:]')
