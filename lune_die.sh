@@ -1,73 +1,76 @@
 #!/bin/bash
-
-
 # -------------------------------------------------------------------
-# File: lune_die.sh                                      /\
-# Type: Bash Shell Script                               /_.\
-# By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2023-10-13                     -~^    /______\`~~-^~:
-# ------------------------
-# Get Moon data from moongiant.com
-# / OS : $Linux, $FreeBSD (X Window)
+# File: lune_die.sh
+# Type: Bash Shell Script
+# Author: Fernando Gilli
+# Last modified: 2026-01-29
+# -------------------------------------------------------------------
+#
+# Description:
+# Retrieves next Full Moon and New Moon using Astro::MoonPhase.
+# Translates output to Portuguese (optional).
+# No external HTTP requests.
+#
 # -------------------------------------------------------------------
 
-# set language
+# Language
 lang="pt-br"
-
-# put your hemisphere here:
-# n for north
-# s for south
-hemisphere="s"
 
 # Working directory
 DirShell="$HOME/.conky/wekers"
+cd "$DirShell" || exit 1
 
-cd ${DirShell}
-touch ${DirShell}/moon_phase_die
+FILE1="$DirShell/moon_phase_die"
+FILE2="$DirShell/raw"
 
-perl moon.pl
+# Ensure file exists
+touch "$FILE1"
 
-sleep 3
-# Translate pt-br
-if [[ $lang == "pt-br" ]]; then
-	  sed -i -e 's/New Moon/Lua Nova/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Full Moon/Lua Cheia/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Waxing Crescent/Lua Crescente/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Waxing Gibbous/Lua Crescente/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Waning Crescent/Lua Minguante/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Waning Gibbous/Lua Minguante/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/First Quarter/Quarto Crescente/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Last Quarter/Quarto Minguante/g' ${DirShell}/moon_phase_die
-     #months
-          sed -i -e 's/Feb/Fev/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Apr/Abr/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/May/Maio/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Aug/Ago/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Sep/Set/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Oct/Out/g' ${DirShell}/moon_phase_die
-          sed -i -e 's/Dec/Dez/g' ${DirShell}/moon_phase_die
-     #others
-          sed -i -e 's/in /em /g' ${DirShell}/moon_phase_die
-          sed -i -e 's/and/e/g' ${DirShell}/moon_phase_die
-          sed -i -e '/^$/d' ${DirShell}/moon_phase_die
-          
-          /usr/bin/sed -i -e 's/New Moon/Lua Nova/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/Full Moon/Lua Cheia/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/Waxing Crescent/Lua Crescente/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/Waxing Gibbous/Lua Crescente/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/Waning Crescent/Lua Minguante/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/Waning Gibbous/Lua Minguante/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/First Quarter/Quarto Crescente/g' ${DirShell}/raw
-	  /usr/bin/sed -i -e 's/Last Quarter/Quarto Minguante/g' ${DirShell}/raw
+# Execute phase calculation
+perl "$DirShell/moon.pl"
+
+# Small delay to ensure file write completion
+sleep 1
+
+# -----------------------------------------------------------
+# Translate to pt-br
+# -----------------------------------------------------------
+
+if [[ "$lang" == "pt-br" ]]; then
+
+    # ---- Translate moon_phase_die (phases + months + helpers) ----
+    sed -i \
+        -e 's/New Moon/Lua Nova/g' \
+        -e 's/Full Moon/Lua Cheia/g' \
+        -e 's/First Quarter/Quarto Crescente/g' \
+        -e 's/Last Quarter/Quarto Minguante/g' \
+        -e 's/Waxing Crescent/Lua Crescente/g' \
+        -e 's/Waxing Gibbous/Lua Gibosa Crescente/g' \
+        -e 's/Waning Gibbous/Lua Gibosa Minguante/g' \
+        -e 's/Waning Crescent/Lua Minguante/g' \
+        -e 's/Feb/Fev/g' \
+        -e 's/Apr/Abr/g' \
+        -e 's/May/Maio/g' \
+        -e 's/Aug/Ago/g' \
+        -e 's/Sep/Set/g' \
+        -e 's/Oct/Out/g' \
+        -e 's/Dec/Dez/g' \
+        -e 's/in /em /g' \
+        -e 's/and/e/g' \
+        -e '/^$/d' \
+        "$FILE1"
+
+    # ---- Translate raw (phase names only) ----
+    sed -i \
+        -e 's/New Moon/Lua Nova/g' \
+        -e 's/Full Moon/Lua Cheia/g' \
+        -e 's/First Quarter/Quarto Crescente/g' \
+        -e 's/Last Quarter/Quarto Minguante/g' \
+        -e 's/Waxing Crescent/Lua Crescente/g' \
+        -e 's/Waxing Gibbous/Lua Gibosa Crescente/g' \
+        -e 's/Waning Gibbous/Lua Gibosa Minguante/g' \
+        -e 's/Waning Crescent/Lua Minguante/g' \
+        "$FILE2"
 fi
 
-# mirror moon image, hemisphere south
-if [[ $hemisphere == "s" ]]; then
-  /usr/bin/convert -flop -colorspace rgb ${DirShell}/moon_tmp.jpg ${DirShell}/moon.jpg
-  /usr/bin/rm ${DirShell}/moon_tmp.jpg
-else
-   /usr/bin/convert -colorspace rgb ${DirShell}moon_tmp.jpg ${DirShell}/moon.jpg
-  /usr/bin/rm ${DirShell}/moon_tmp.jpg
-fi
-
-#EOF
+exit 0

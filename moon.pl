@@ -1,104 +1,138 @@
-#!/usr/bin/perl -w
-
-#to install, with sudo
-#perl -MCPAN -e 'install Astro::MoonPhase'
-
+#!/usr/bin/perl
 # -------------------------------------------------------------------
-# File: moon.pl                                          /\
-# Type: Perl Script                                     /_.\
-# By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2023-09-30                     -~^    /______\`~~-^~:
-# ------------------------
-# Get Moon data from perl module Astro::MoonPhase
-# / OS : $Linux, $FreeBSD (X Window)
+# File: moon.pl
+# Type: Perl Script
+# Author: Fernando Gilli
+# Last modified: 2026-01-29
+# -------------------------------------------------------------------
+#
+# Description:
+# Calculates the next Full Moon and next New Moon
+# within a 30-day window using Astro::MoonPhase.
+#
+# The script writes a 4-line file:
+#
+# Line 0 → Full Moon label
+# Line 1 → Full Moon date or countdown
+# Line 2 → New Moon label
+# Line 3 → New Moon date or countdown
+#
+# Output file:
+#   moon_phase_die
+#
+# This file is later consumed by lune_die.sh
+# for translation and Conky display.
+#
+# Requirement:
+#   perl -MCPAN -e 'install Astro::MoonPhase'
+#
+# Compatible with:
+# Linux / FreeBSD / X environments
 # -------------------------------------------------------------------
 
-
-use warnings;
 use strict;
+use warnings;
 use POSIX qw(strftime);
-
 use Astro::MoonPhase;
 
-open(my $fh, '<', 'moon_phase_die'); # open file
-  my @list = <$fh>;
-close $fh; # Close file
+my $file = 'moon_phase_die';
 
+# Ensure minimal structure (4 lines always written)
+my @list = ("", "", "", "");
 
-my $start = time();
-my $stop = $start+30*24*60*60; # Now +30 days
+# -------------------------------------------------------
+# Define search interval (now → next 30 days)
+# -------------------------------------------------------
 
-my @name = ("New Moon", "First Quarter", "Full Moon", "Last Quarter");
-(my $phase, my @times) = phaselist($start, $stop);
- 
-my $countFullMoon = 0;
-my $countNewMoon = 0;
+my $now   = time();
+my $start = $now;
+my $stop  = $start + 30 * 24 * 60 * 60;  # 30 days ahead
 
-while (@times){
+# Moon phase index mapping (0–3)
+my @name = (
+    "New Moon",
+    "First Quarter",
+    "Full Moon",
+    "Last Quarter"
+);
 
-  my $timeNextPhase = scalar shift @times;
+# Retrieve phase sequence in interval
+my ($phase, @times) = phaselist($start, $stop);
 
-  if ($phase eq 2 and $countFullMoon eq 0) { # 2 = Full Moon
-      
-      $countFullMoon = 1; # to execute only one time
-      
-      my $days_left_full = int((($timeNextPhase - time()) ) / 24 / 60 / 60);
-      my $hours_left_full = int((($timeNextPhase - time()) % 86400) / 3600);
-      my $min_left_full = int((($timeNextPhase - time()) % 3600) / 60);
-     
-      # list to write on file
-      $list[0] = "$name[$phase]\n";
-            
-      if($days_left_full eq 0 and $hours_left_full > 0){
-	  $list[1] = "in $hours_left_full hr   \n";
-      }
-      elsif ($days_left_full eq 0 and $hours_left_full eq 0) {
-	  $list[1] = "in $min_left_full m    \n";
-      }
-      elsif ($days_left_full > 0) {
-	  $list[1] = ucfirst strftime("%b %d\n", localtime($timeNextPhase));
-	  #print ucfirst strftime("%b %d %R", gmtime($timeNextPhase)), "\n"; #In GMT Time
-      }
-      
-      #print "days left for full is: $days_left_full", "\n";
-      #print "hour left for full is: $hours_left_full hrs", "\n";
-      #print "min left for full is: $min_left_full m", "\n";
-   
-  }
-    
-  if ($phase eq 0 and $countNewMoon eq 0) { # 2 = Full Moon
-      
-      $countNewMoon = 1; # to execute only one time
-      
-      my $days_left_new = int((($timeNextPhase - time()) ) / 24 / 60 / 60);
-      my $hours_left_new = int((($timeNextPhase - time()) % 86400) / 3600);
-      my $min_left_new = int((($timeNextPhase - time()) % 3600) / 60);
-     
-      # list to write on file
-      $list[2] = "$name[$phase]\n";
-            
-      if($days_left_new eq 0 and $hours_left_new > 0){
-	  $list[3] = "in $hours_left_new hr   \n";
-      }
-      elsif ($days_left_new eq 0 and $hours_left_new eq 0) {
-	  $list[3] = "in $min_left_new m    \n";
-      }
-      elsif ($days_left_new > 0) {
-	  $list[3] = ucfirst strftime("%b %d\n", localtime($timeNextPhase));
-	  #print ucfirst strftime("%b %d %R", gmtime($timeNextPhase)), "\n"; #In GMT Time
-      }
-      
-      #print "days left for new is: $days_left_new", "\n";
-      #print "hour left for new is: $hours_left_new hrs", "\n";
-      #print "min left for new is: $min_left_new m", "\n";
- 
-  }
+my $found_full = 0;
+my $found_new  = 0;
 
-$phase = ($phase + 1) % 4;
+# -------------------------------------------------------
+# Iterate through upcoming phase transitions
+# -------------------------------------------------------
 
-open(my $fh, '>', 'moon_phase_die'); # open file
-  print $fh @list; # print list on file
-close $fh; # Close file
+while (@times) {
 
-} # Close while
+    my $time_next = shift @times;
 
+    # Compute time delta once
+    my $delta = $time_next - $now;
+
+    my $days  = int($delta / 86400);
+    my $hours = int(($delta % 86400) / 3600);
+    my $mins  = int(($delta % 3600) / 60);
+
+    # -------------------------------
+    # FULL MOON (phase index = 2)
+    # -------------------------------
+
+    if ($phase == 2 && !$found_full) {
+
+        $found_full = 1;
+        $list[0] = "$name[$phase]\n";
+
+        if ($days == 0 && $hours > 0) {
+            $list[1] = "in $hours hr\n";
+        }
+        elsif ($days == 0 && $hours == 0) {
+            $list[1] = "in $mins min\n";
+        }
+        else {
+            $list[1] = ucfirst strftime("%-d %b\n", localtime($time_next));
+        }
+    }
+
+    # -------------------------------
+    # NEW MOON (phase index = 0)
+    # -------------------------------
+
+    if ($phase == 0 && !$found_new) {
+
+        $found_new = 1;
+        $list[2] = "$name[$phase]\n";
+
+        if ($days == 0 && $hours > 0) {
+            $list[3] = "in $hours hr\n";
+        }
+        elsif ($days == 0 && $hours == 0) {
+            $list[3] = "in $mins min\n";
+        }
+        else {
+            $list[3] = ucfirst strftime("%-d %b\n", localtime($time_next));
+        }
+    }
+
+    # Advance phase index cyclically (0–3)
+    $phase = ($phase + 1) % 4;
+
+    # Exit early if both events were found
+    last if ($found_full && $found_new);
+}
+
+# -------------------------------------------------------
+# Write output file once
+# -------------------------------------------------------
+
+open(my $fh, '>', $file)
+    or die "Cannot write $file: $!";
+
+print $fh @list;
+
+close $fh;
+
+exit 0;

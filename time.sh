@@ -1,409 +1,326 @@
 #!/bin/bash
-
 # -------------------------------------------------------------------
-# File: time.sh                                          /\
-# Type: Bash Shell Script                               /_.\
-# By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2025-02-23                     -~^    /______\`~~-^~:
-# ------------------------
-# Manipulate data of weather
-# / OS : $Linux, $FreeBSD (X Window)
+# File: time.sh
+# Type: Bash Shell Script
+# Author: Fernando Gilli
+# Last modified: 2026-01-31
+# -------------------------------------------------------------------
+# Weather and Moon data manipulation for Conky
+# Compatible with Linux / FreeBSD
 # -------------------------------------------------------------------
 
-
-# set language
 lang="pt-br"
 
-#Working directory
 DirShell="$HOME/.conky/wekers"
+CACHE_CURRENT="$HOME/.cache/weather_current.xml"
+CACHE_FORECAST="$HOME/.cache/weather.xml"
+MOON_FILE="$DirShell/moon_phase_die"
+
+# -------------------------------------------------------
+# Helper Functions
+# -------------------------------------------------------
+
+# Extract first matching line from current weather XML
+xml_current() {
+    grep -m1 "$1" "$CACHE_CURRENT"
+}
 
 
-case $lang in
+# Extract forecast block by datetime
+xml_forecast_block() {
+    local datetime="$1"
+    grep -A6 "from=\"$datetime\"" "$CACHE_FORECAST"
+}
 
-     # translate pt-br
-     pt-br)
-          cpre="--> "
-          cprec="Possib. Chuva"
-          rain="--> Chuva"
-          proxlem=$(sed -n 4p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
-          proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-9)
-          proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
-          proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | tr ' ' '\n'|tac| tr '\n' ' ' | cut -c1-22)
-          on="em"
-          mm="mm"
-          prox="Próx"
-          feels="Sensação  Térmica"
-          cloud_text="Cobertura de Nuvens"
-          windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6 \
-			     | sed -e 's/Light breeze/Brisa Leve/g' \
-			     | sed -e 's/Moderate breeze/Brisa Moderada/g' \
-			     | sed -e 's/Fresh Breeze/Brisa Fresca/g' \
-			     | sed -e 's/Gentle Breeze/Brisa Suave/g' \
-			     | sed -e 's/Strong breeze/Brisa Forte/g' \
-			     | sed -e 's/Calm/Brisa Calma/g' \
-			     | sed -e 's/High wind, near gale/Vento Forte, vendaval perto/g' )
-;;
+# Get forecast temperature (min/max)
+get_forecast_temp() {
+    local datetime="$1"
+    local field="$2"
+    xml_forecast_block "$datetime" \
+        | sed -n 7p \
+        | cut -d'"' -f"$field" \
+        | cut -d'.' -f1
+}
 
-*)
-          # default
-          cpre="--> "
-          cprec="Chance of Precipitation"
-          rain="--> Rain"
-          proxlemc=$(sed -n 4p ${DirShell}/moon_phase_die | cut -c1-9);
-          proxlem=$proxlemc
-          proxlfullem=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-22)
-          on="in"
-          mm="mm"
-          prox="Next"
-          windv=$(grep "speed" ~/.cache/weather_current.xml | cut -d'"' -f6)
-          proxlemcfull=$(sed -n 2p ${DirShell}/moon_phase_die | cut -c1-9)
-          feels="	Feels Like"
-#           cloud_text="Clouds Cover"
-          ;;
+# Extract forecast symbol line
+get_forecast_symbol() {
+    local datetime="$1"
+    xml_forecast_block "$datetime" | sed -n 2p
+}
 
+# -------------------------------------------------------
+# Forecast helpers (refactored)
+# -------------------------------------------------------
+
+# Get forecast block by day offset (1,2,3)
+forecast_block() {
+    local day="$1"
+    local time
+    time=$(date --date="$day day" +%Y-%m-%dT12:00:00)
+
+    awk -v t="$time" '
+        $0 ~ "from=\""t"\"" {getline; print; exit}
+    ' "$CACHE_FORECAST"
+}
+
+# Extract forecast description (cast text)
+forecast_cast() {
+    local day="$1"
+    local time
+    time=$(date --date="$day day" +%Y-%m-%dT12:00:00)
+
+    awk -v t="$time" '
+        $0 ~ "from=\""t"\"" {
+            while (getline) {
+                if ($0 ~ /symbol number=/) {
+                    match($0, /name="([^"]+)"/, arr)
+                    if (arr[1] != "") {
+                        print arr[1]
+                        exit
+                    }
+                }
+                if ($0 ~ /<\/time>/) exit
+            }
+        }
+    ' "$CACHE_FORECAST" \
+    | cut -d'.' -f1 \
+    | awk '{print toupper(substr($0,1,1)) substr($0,2)}'
+}
+
+
+# -------------------------------------------------------
+# Language block
+# -------------------------------------------------------
+
+case "$lang" in
+    pt-br)
+        cpre="--> "
+        cprec="Possib. Chuva"
+        rain="--> Chuva"
+        prox="Próx"
+        on="em"
+        mm="mm"
+        feels="Sensação Térmica"
+        cloud_text="Cobertura de Nuvens"
+
+        windv=$(xml_current "speed" | cut -d'"' -f6 | sed \
+            -e 's/Light breeze/Brisa Leve/g' \
+            -e 's/Moderate breeze/Brisa Moderada/g' \
+            -e 's/Fresh Breeze/Brisa Fresca/g' \
+            -e 's/Gentle Breeze/Brisa Suave/g' \
+            -e 's/Strong breeze/Brisa Forte/g' \
+            -e 's/Calm/Brisa Calma/g' \
+            -e 's/High wind, near gale/Vento Forte, vendaval perto/g')
+        ;;
+    *)
+        cpre="--> "
+        cprec="Chance of Precipitation"
+        rain="--> Rain"
+        prox="Next"
+        on="in"
+        mm="mm"
+        feels="Feels Like"
+        cloud_text="Cloud Cover"
+        windv=$(xml_current "speed" | cut -d'"' -f6)
+        ;;
 esac
 
+# -------------------------------------------------------
+# Main Dispatcher
+# -------------------------------------------------------
 
-case $1 in
+case "$1" in
 
-      img)
-          img_result=$(grep "number" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
-	    if [[ $img_result -ne 800 && $img_result -ne 801 && $img_result -ne 802 && $img_result -ne 803 ]]; then
-	      cp -f ${DirShell}/images/$(grep "number" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2).png ~/.cache/weather.png
-	      echo ""
-	      echo ""
-	    fi
-          ;;
+    img)
+        img_code=$(xml_current "number" | cut -d'"' -f2)
+        if [[ ! "$img_code" =~ ^80[0-3]$ ]]; then
+            cp -f "$DirShell/images/$img_code.png" ~/.cache/weather.png
+        fi
+        ;;
 
-      dir)
-          result=$(grep "direction" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f4 | tr [[:lower:]] [[:upper:]] | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g')
-	    if [[ $result != "<DIRECTION/>" ]]; then
-	      echo "$result"
-	    else
-	      echo ""
-	    fi
-	  ;;
+    dir)
+	result=$(xml_current "direction" | awk -F'"' 'NF>=4 {print $4}' | tr '[:lower:]' '[:upper:]')
 
-      wname)
-          result=$windv
-	    if [[ $result != "Setting" ]]; then
-		     echo "$result"
-	    else
-	      echo ""
-	    fi
-	  ;;
-
-      wicon)
-	  cp -f ${DirShell}/images/wind/orange_$(grep "direction" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f4 | tr [[:upper:]] [[:lower:]] | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g').png ~/.cache/wind.png
-	  ;;
-
-      1max)
-	  time=$(date --date="1 day" +%Y-%m-%dT15:00:00)
-	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
-	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
+	if [ -n "$result" ]; then
 	  echo "$result"
-          ;;
+	fi
+	;;
 
-      2max)
-	  time=$(date --date="2 day" +%Y-%m-%dT15:00:00)
-	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
-	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
-	  echo "$result"
-          ;;
+    wname)
+        speed=$(xml_current "speed" | awk -F'"' 'NF>=2 {print $2}')
+        name=$(xml_current "speed" | awk -F'"' 'NF>=6 {print $6}')
 
-      3max)
-	  time=$(date --date="3 day" +%Y-%m-%dT15:00:00)
-	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f8 | cut -d'.' -f1)
-	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f8 | cut -d'.' -f1)
-	  echo "$result"
-          ;;
+        # If wind speed is zero or empty → no wind
+        if [ -z "$speed" ] || awk "BEGIN {exit !($speed == 0)}" || [ "$speed" = "Setting" ]; then
+           
+           if [ "$lang" = "pt-br" ]; then
+               echo "Sem vento"
+           else
+               echo "No wind"
+           fi
+           
+        else
+          echo "$windv"
+        fi
+        ;;
 
-      1min)
-	  time=$(date --date="1 day" +%Y-%m-%dT06:00:00)
-	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
-	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
-	  echo "$result"
-          ;;
+    wicon)
+	speed=$(xml_current "speed" | cut -d'"' -f2)
+	direction=$(xml_current "direction" | awk -F'"' 'NF>=4 {print $4}' | tr '[:upper:]' '[:lower:]')
 
-      2min)
-	  time=$(date --date="2 day" +%Y-%m-%dT06:00:00)
-	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
-	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
-	  echo "$result"
-          ;;
-
-      3min)
-	  time=$(date --date="3 day" +%Y-%m-%dT06:00:00)
-	  #result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 6p | cut -d'"' -f6 | cut -d'.' -f1)
-	  result=$(grep -A6 "from=\"$time\"" ~/.cache/weather.xml | sed -n 7p | cut -d'"' -f6 | cut -d'.' -f1)
-	  echo "$result"
-          ;;
-
-      weather-1)
-	  time=$(date --date="1 day" +%Y-%m-%dT12:00:00)
-	  result=$(grep -A1 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f2)
-	    if [[ $result -eq 800 || $result -eq 801 || $result -eq 802 || $result -eq 803 ]]; then
-	      result=$(grep -A1 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f6)
-	    fi
-	  cp -f ${DirShell}/images/$result.png ~/.cache/weather-1.png
-          ;;
-
-      weather-2)
-	  time=$(date --date="2 day" +%Y-%m-%dT12:00:00)
-	  result=$(grep -A1 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f2)
-	    if [[ $result -eq 800 || $result -eq 801 || $result -eq 802 || $result -eq 803 ]]; then
-	      result=$(grep -A1 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f6)
-	    fi
-	  cp -f ${DirShell}/images/$result.png ~/.cache/weather-2.png
-          ;;
-
-      weather-3)
-	  time=$(date --date="3 day" +%Y-%m-%dT12:00:00)
-	  result=$(grep -A1 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f2)
-	    if [[ $result -eq 800 || $result -eq 801 || $result -eq 802 || $result -eq 803 ]]; then
-	      result=$(grep -A1 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f6)
-	    fi
-	  cp -f ${DirShell}/images/$result.png ~/.cache/weather-3.png
-          ;;
-
-      cast-1)
-          time=$(date --date="1 day" +%Y-%m-%dT12:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f4 | cut -d'.' -f1 | sed 's/\([a-z]\)\([a-zA-Z0-9]*\)/\u\1\2/g')
-	  echo "$result"
-          ;;
-
-      cast-2)
-          time=$(date --date="2 day" +%Y-%m-%dT12:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f4 | cut -d'.' -f1 | sed 's/\([a-z]\)\([a-zA-Z0-9]*\)/\u\1\2/g')
-	  echo "$result"
-          ;;
-
-      cast-3)
-          time=$(date --date="3 day" +%Y-%m-%dT12:00:00)
-	  result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 2p | cut -d'"' -f4 | cut -d'.' -f1 | sed 's/\([a-z]\)\([a-zA-Z0-9]*\)/\u\1\2/g')
-	  echo "$result"
-          ;;
-
-      mnext)
-	  proxl=$(sed -n 3p ${DirShell}/moon_phase_die)
-	     if [ $(sed -n 4p ${DirShell}/moon_phase_die | wc -m) -gt 9 ]; then
-		echo "   $proxl $proxlemc"
-	     else
-                echo "   $prox $proxl  --> $proxlem"
-
-             fi
-          ;;
-
-      mnextfull)
-          proxlfull=$(sed -n 1p ${DirShell}/moon_phase_die)
-	     if [ $(sed -n 2p ${DirShell}/moon_phase_die | wc -m) -gt 9 ]; then
-		echo "   $proxlfull $proxlemcfull"
-	     else
-                echo "   $prox $proxlfull --> $proxlfullem"
-
-             fi
-          ;;
-
-      at)
-          # Apparent temp calc
-          #temper=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f6)
-          temper=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
-          wspeed=$(grep "speed" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
-          rh=$(grep "humidity" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
-          rhcalc=$(echo "$rh/100" | bc -l)
-          exp=$(echo "(17.27*$temper) / (237.7+$temper)" | bc -l)
-          ex=$(echo "e($exp*l(6.105))" | bc -l)
-          e=$(echo "$rhcalc*$ex" | bc -l)
-          at=$(echo "$temper + (0.348 * $e) - (0.7 * wspeed) - 4" | bc -l)
-          echo $at | awk '{print int($at+0.5)}'
-          ;;
-
-       atext)
-	  echo $feels
-	  ;;
-
-       temp) #f6 to -> f2
-	  temperature=$(grep "temperature" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2 | awk '{print int($1+0.5)}')
-	  echo "$temperature"
-       ;;
-       
-       clouds)
-	  cloud=$(grep "clouds" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
-	  echo "$cloud"
-       ;;
-       
-       cloudtext)
-	   echo $cloud_text
-       ;;
-
-       precipitation)
-          hora=$(date --date="now" +%H%M)
-	  hora=10#$hora
-	  currenttimeS=$(date --date="now" +%s)
-	  currenttime=$(date --date="now" +%Y-%m-%dT%H:%M:%S)
-	  chuva=$(grep "precipitation" ~/.cache/weather_current.xml | head -n 1 | cut -d'"' -f2)
+	if [ "$speed" != "0" ] && [ -n "$direction" ]; then
+	  cp -f "$DirShell/images/wind/orange_${direction}.png" ~/.cache/wind.png
+	fi
+	;;
 
 
-          if [ $chuva == "no" ]; then
+    1max|2max|3max)
+        day="${1%max}"
+        time=$(date --date="$day day" +%Y-%m-%dT15:00:00)
+        get_forecast_temp "$time" 8
+        ;;
 
-          
-	      
-              if (( $hora >= 10#0000 &&  $hora < 10#0300 )); then
+    1min|2min|3min)
+        day="${1%min}"
+        time=$(date --date="$day day" +%Y-%m-%dT06:00:00)
+        get_forecast_temp "$time" 6
+        ;;
 
-	        time=$(date --date="now" +%Y-%m-%dT03:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      	      
-		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		   echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+    weather-1|weather-2|weather-3)
+        day="${1#weather-}"
+        block=$(forecast_block "$day")
+        code=$(echo "$block" | awk -F'"' '{print $2}')
 
-              elif (( $hora >= 10#0300 && $hora < 10#0600 )); then
+        if [[ "$code" =~ ^80[0-3]$ ]]; then
+            code=$(echo "$block" | awk -F'"' '{print $6}')
+        fi
 
-	        time=$(date --date="now" +%Y-%m-%dT06:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      
-	        if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		  echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+        cp -f "$DirShell/images/${code}.png" ~/.cache/weather-${day}.png
+        ;;
 
-	      elif (( $hora >= 10#0600 && $hora < 10#0900 )); then
+    cast-1|cast-2|cast-3)
+        day="${1#cast-}"
+        forecast_cast "$day"
+        ;;
 
-	        time=$(date --date="now" +%Y-%m-%dT09:00:00)
-		result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	        
-	        if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		   echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+    # -------------------------------------------------------
+    # Moon next events (safe version)
+    # -------------------------------------------------------
 
-	      elif (( $hora >= 10#0900 && $hora < 10#1200 )); then
+    mnext)
+        line3=$(sed -n '3p' "$MOON_FILE")
+        line4=$(sed -n '4p' "$MOON_FILE")
 
-	        time=$(date --date="now" +%Y-%m-%dT12:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      
-		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		  echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+        if [ -n "$line3" ] && [ -n "$line4" ]; then
+            echo "   $prox $line3 --> $line4"
+        fi
+        ;;
 
-	      elif (( $hora >= 10#1200 && $hora < 10#1500 )); then
+    mnextfull)
+        line1=$(sed -n '1p' "$MOON_FILE")
+        line2=$(sed -n '2p' "$MOON_FILE")
 
-	        time=$(date --date="now" +%Y-%m-%dT15:00:00)
-		result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      
-		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		   echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+        if [ -n "$line1" ] && [ -n "$line2" ]; then
+            echo "   $prox $line1 --> $line2"
+        fi
+        ;;
 
-	      elif (( $hora >= 10#1500 && $hora < 10#1800 )); then
+    # -------------------------------------------------------
+    # Apparent temperature (Heat Index style)
+    # -------------------------------------------------------
 
-	        time=$(date --date="now" +%Y-%m-%dT18:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      
-		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		   echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm 
-		fi
+    at)
+        temper=$(xml_current "temperature" | cut -d'"' -f2)
+        wspeed=$(xml_current "speed" | cut -d'"' -f2)
+        rh=$(xml_current "humidity" | cut -d'"' -f2)
 
-	      elif (( $hora >= 10#1800 && $hora < 10#2100 )); then
+        rhcalc=$(echo "$rh/100" | bc -l)
+        exp=$(echo "(17.27*$temper)/(237.7+$temper)" | bc -l)
+        ex=$(echo "e($exp*l(6.105))" | bc -l)
+        e=$(echo "$rhcalc*$ex" | bc -l)
+        at=$(echo "$temper + (0.348*$e) - (0.7*$wspeed) - 4" | bc -l)
 
-	        time=$(date --date="now" +%Y-%m-%dT21:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      
-		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		   echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+        if [ -n "$at" ]; then
+	  awk 'BEGIN{printf "%d\n", '"$at"'+0.5}'
+	fi
+        ;;
 
-              elif (( $hora >= 2100 && $hora <= 2359 )); then
+    temp)
+        xml_current "temperature" | cut -d'"' -f2 | awk '{printf "%d\n",$1+0.5}'
+        ;;
 
-	        time=$(date  --date="1 day" +%Y-%m-%dT00:00:00)
-	        result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }')
-		probability=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f2 | awk '{ print $1 }')
-	      
-		if [[ $result == "<precipitation/>" || $probability == "0" ]]; then
-		   echo ""
-		else
-		   result=$(grep -A5 "from=\"$time\"" ~/.cache/weather.xml | sed -n 3p | cut -d'"' -f6 | awk '{ print $1 }' | awk '{printf "%0.2f\n",$1}')
-		   if [ $result == "0.00" ]; then
-		    result=""
-		    mm=""
-		   fi
-		   probability=$(echo $probability*100 | bc | awk '{ print $1}' | awk '{printf "%0.0f\n",$1}')
-		   echo " $cpre"$probability% $cprec $result $mm
-		fi
+    clouds)
+        xml_current "clouds" | cut -d'"' -f2
+        ;;
 
-              fi
+    cloudtext)
+        echo "$cloud_text"
+        ;;
 
-          else
+    atext)
+        echo "$feels"
+        ;;
+        
+    lastupdate)
+	raw=$(xmllint --xpath 'string(//lastupdate/@value)' ~/.cache/weather_current.xml 2>/dev/null)
+	date -d "$raw UTC" +"%H:%M"
+	;;
 
-              echo " $rain" $chuva $mm
 
-          fi
-          ;;
 
-       *)
+    # -------------------------------------------------------
+    # Precipitation (fully refactored)
+    # -------------------------------------------------------
 
+    precipitation)
+
+        hora=$(date +%H%M)
+        hora=$((10#$hora))
+
+        chuva=$(xml_current "precipitation" | cut -d'"' -f2)
+
+        # If currently raining
+        if [[ "$chuva" != "no" ]]; then
+            echo " $rain $chuva $mm"
+            exit 0
+        fi
+
+        # Calculate next 3-hour forecast slot
+        hour_now=$(date +%H)
+        hour_now=$((10#$hour_now))
+        next_slot=$(( ( (hour_now / 3) + 1 ) * 3 ))
+
+
+        if (( next_slot >= 24 )); then
+            time=$(date --date="1 day" +%Y-%m-%dT00:00:00)
+        else
+            printf -v next_slot "%02d" "$next_slot"
+            time=$(date +%Y-%m-%dT${next_slot}:00:00)
+        fi
+
+        block=$(grep -A5 "from=\"$time\"" "$CACHE_FORECAST")
+        probability=$(echo "$block" | sed -n 3p | cut -d'"' -f2)
+        result=$(echo "$block" | sed -n 3p | cut -d'"' -f6)
+
+        if [[ "$result" == "<precipitation/>" || "$probability" == "0" ]]; then
+            exit 0
+        fi
+
+        result=$(echo "$result" | awk '{printf "%0.2f\n",$1}')
+
+        if [[ "$result" == "0.00" ]]; then
+            exit 0
+        fi
+
+        probability=$(echo "$probability * 100" | bc | awk '{printf "%0.0f\n",$1}')
+
+        echo " $cpre${probability}% $cprec $result $mm"
+        ;;
+
+    *)
+        ;;
 esac
 
-#EOF
+exit 0
 
+# EOF
