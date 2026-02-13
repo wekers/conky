@@ -9,12 +9,12 @@
 # Compatible with Linux / FreeBSD
 # -------------------------------------------------------------------
 
-lang="pt-br"
-
 DirShell="$HOME/.conky/wekers"
 CACHE_CURRENT="$HOME/.cache/weather_current.xml"
 CACHE_FORECAST="$HOME/.cache/weather.xml"
 MOON_FILE="$DirShell/moon_phase_die"
+
+
 
 # -------------------------------------------------------
 # Helper Functions
@@ -87,14 +87,14 @@ forecast_cast() {
     | awk '{print toupper(substr($0,1,1)) substr($0,2)}'
 }
 
-
 # -------------------------------------------------------
 # Language block
 # -------------------------------------------------------
+LANG_CODE=${LANG%%_*}
 
-case "$lang" in
-    pt-br)
-        cpre="--> "
+case "$LANG_CODE" in
+    pt)
+	cpre="--> "
         cprec="Possib. Chuva"
         rain="--> Chuva"
         prox="Próx"
@@ -102,6 +102,8 @@ case "$lang" in
         mm="mm"
         feels="Sensação Térmica"
         cloud_text="Cobertura de Nuvens"
+        LABEL_HUMIDITY="Umidade"
+	LABEL_WIND="Ventos à"
 
         windv=$(xml_current "speed" | cut -d'"' -f6 | sed \
             -e 's/Light breeze/Brisa Leve/g' \
@@ -111,18 +113,20 @@ case "$lang" in
             -e 's/Strong breeze/Brisa Forte/g' \
             -e 's/Calm/Brisa Calma/g' \
             -e 's/High wind, near gale/Vento Forte, vendaval perto/g')
-        ;;
+	;;
     *)
-        cpre="--> "
+	cpre="--> "
         cprec="Chance of Precipitation"
         rain="--> Rain"
         prox="Next"
         on="in"
         mm="mm"
-        feels="Feels Like"
+        feels="    Feels Like"
         cloud_text="Cloud Cover"
         windv=$(xml_current "speed" | cut -d'"' -f6)
-        ;;
+        LABEL_HUMIDITY="Humidity"
+	LABEL_WIND="Wind at"
+	;;
 esac
 
 # -------------------------------------------------------
@@ -276,6 +280,15 @@ case "$1" in
 	raw=$(xmllint --xpath 'string(//lastupdate/@value)' ~/.cache/weather_current.xml 2>/dev/null)
 	date -d "$raw UTC" +"%H:%M"
 	;;
+	
+    humidity_label)
+	echo "$LABEL_HUMIDITY"
+	;;
+
+    wind_label)
+	echo "$LABEL_WIND"
+	;;
+
 
 
 
