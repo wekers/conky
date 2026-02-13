@@ -13,9 +13,6 @@
 #
 # -------------------------------------------------------------------
 
-# Language
-lang="pt-br"
-
 # Working directory
 DirShell="$HOME/.conky/wekers"
 cd "$DirShell" || exit 1
@@ -32,14 +29,16 @@ perl "$DirShell/moon.pl"
 # Small delay to ensure file write completion
 sleep 1
 
-# -----------------------------------------------------------
-# Translate to pt-br
-# -----------------------------------------------------------
+# -------------------------------------------------------
+# Language block
+# -------------------------------------------------------
+LANG_CODE=${LANG%%_*}
 
-if [[ "$lang" == "pt-br" ]]; then
+case "$LANG_CODE" in
+    pt)
 
-    # ---- Translate moon_phase_die (phases + months + helpers) ----
-    sed -i \
+      # ---- Translate moon_phase_die (phases + months + helpers) ----
+      sed -i \
         -e 's/New Moon/Lua Nova/g' \
         -e 's/Full Moon/Lua Cheia/g' \
         -e 's/First Quarter/Quarto Crescente/g' \
@@ -60,8 +59,8 @@ if [[ "$lang" == "pt-br" ]]; then
         -e '/^$/d' \
         "$FILE1"
 
-    # ---- Translate raw (phase names only) ----
-    sed -i \
+      # ---- Translate raw (phase names only) ----
+      sed -i \
         -e 's/New Moon/Lua Nova/g' \
         -e 's/Full Moon/Lua Cheia/g' \
         -e 's/First Quarter/Quarto Crescente/g' \
@@ -71,6 +70,8 @@ if [[ "$lang" == "pt-br" ]]; then
         -e 's/Waning Gibbous/Lua Gibosa Minguante/g' \
         -e 's/Waning Crescent/Lua Minguante/g' \
         "$FILE2"
-fi
+    ;;
+    
+esac
 
 exit 0
