@@ -1,0 +1,316 @@
+-- -------------------------------------------------------------------
+-- File: .conkyrc 
+-- Resolution: 2K - 2560x1440                             /\
+-- Type: conky main file                                 /_.\
+-- By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
+-- Last modified:2026-02-12                     -~^    /______\`~~-^~:
+-- ------------------------
+-- Main File to Run
+-- / OS : $Linux, $FreeBSD (X Window)
+-- -------------------------------------------------------------------
+
+conky.config = {
+    -- Basic config (Configurações básicas)
+    update_interval = 10,
+    total_run_times = 0,
+    double_buffer = true,
+    no_buffers = true,
+    
+    -- Font and text
+    use_xft = true,
+    xftalpha = 0.1, -- softer or stronger contrast 0.1-1.0
+    override_utf8_locale = true,
+    font = 'Bitstream Vera Sans Mono:size=11',
+    short_units = true,
+    uppercase = false,
+    
+    -- Window (Janela)
+    own_window = true,
+    own_window_type = 'normal',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    own_window_argb_value = 12,
+    own_window_class = 'Conky',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_colour = '082103',
+    
+    -- Size and position (Tamanho e posição)
+    minimum_width = 300,
+    minimum_height = 5,
+    maximum_width = 400,
+    alignment = 'top_left',
+    gap_x = 4,
+    gap_y = 25,
+    
+    -- Borders and drawing (Bordas e desenhos)
+    draw_shades = true,
+    draw_outline = false,
+    draw_borders = false,
+    -- draw_borders = true,
+    draw_graph_borders = true,
+    stippled_borders = 5,
+    border_inner_margin = 0,
+    border_outer_margin = 0,
+    border_width = 1,
+    use_spacer = 'none',
+    
+    -- Default colors (Cores padrão)
+    default_color = 'white',
+    default_shade_color = 'black',
+    default_outline_color = 'black',
+    color0 = 'PaleGreen',
+    color1 = 'DarkSeaGreen',
+    color2 = 'SeaGreen',
+    color3 = 'GreenYellow',
+    color4 = 'DarkSeaGreen',
+    color5 = 'white',
+    color6 = 'DarkOliveGreen3',
+    color7 = 'khaki1',
+    color8 = 'white',
+    color9 = 'ForestGreen',
+    
+    -- Specific settings (Configurações específicas)
+    cpu_avg_samples = 2,
+    net_avg_samples = 2,
+    top_cpu_separate = false,
+    top_name_width = 18,
+};
+
+
+conky.text = [[
+${if_running plasma-desktop}${voffset 2}${endif}${color ccddfe}${font Bitstream Vera Sans Mono:size=10,5}${time %a, %d %b %Y, %H:%M:%S}  ${color0}Uptime:${color DarkOrange1} ${uptime}${color}
+# ================================
+# WEATHER
+# ================================
+${font Liberation Sans:size=14}${color CCCCDD}${voffset 4}${execi 300 cat ~/.cache/weather.xml 2>/dev/null | grep -oP '(?<=<name>).*(?=</name>)' | tr '[:lower:]' '[:upper:]' 2>/dev/null}, ${execi 300 cat ~/.cache/weather.xml 2>/dev/null | grep -oP '(?<=<country>).*(?=</country>)' | tr '[:lower:]' '[:upper:]' 2>/dev/null}$font
+${voffset -2}${font Liberation Sans:size=7}${color CCCCCC}( Updated  ${execi 280 sh ~/.conky/wekers/time.sh lastupdate} )
+${voffset -13}${font Liberation Sans:size=15:style=bold}${goto 365}\
+${if_match ${execi 120 sh ~/.conky/wekers/time.sh temp} > 32}\
+${color fb5800}${execi 120 sh ~/.conky/wekers/time.sh temp}°\
+${else}\
+${if_match ${execi 120 sh ~/.conky/wekers/time.sh temp} > 20}\
+${color FFD700}${execi 120 sh ~/.conky/wekers/time.sh temp}°\
+${else}\
+${if_match ${execi 120 sh ~/.conky/wekers/time.sh temp} <= 15}\
+${color 77bfe8}${execi 120 sh ~/.conky/wekers/time.sh temp}°\
+${else}\
+${color EEFFFE}${execi 120 sh ~/.conky/wekers/time.sh temp}°\
+${endif}${endif}${endif}${color}
+\
+${voffset -12}${font Liberation Sans:size=12:style=bold}${color FF8C00}${execi 180 grep "weather" ~/.cache/weather_current.xml 2>/dev/null | head -n 1 | cut -d'"' -f4 | sed 's/.*/\u&/' 2>/dev/null}${color}
+${voffset -2}${font Liberation Sans:style=bold:size=9}${color EEFFFE}${exec sh ~/.conky/wekers/time.sh cloudtext 2>/dev/null}: ${color AAbfe8}${execi 180 sh ~/.conky/wekers/time.sh clouds 2>/dev/null}%${color}
+${voffset 2}${font Liberation Sans:size=9:style=bold}${color EEFFFE}\
+${exec sh ~/.conky/wekers/time.sh humidity_label}: \
+${color 77bfe8}${execi 310 grep "humidity" ~/.cache/weather_current.xml 2>/dev/null | head -n 1 | cut -d'"' -f2}%${color}
+\
+# 
+# Wind & Precipitation
+# ========
+${voffset 2}${font Liberation Sans:size=9:style=bold}${color EEFFFE}\
+${exec sh ~/.conky/wekers/time.sh wind_label} \
+${color 3cbf9a}${execi 180 grep "speed" ~/.cache/weather_current.xml \
+| head -n 1 | cut -d'"' -f2 | awk '{print int($1*3.6)}'} km/h \
+${color}${font Liberation Sans:size=8:style=bold} --> ${color 3cbf9a}${execi 180 sh ~/.conky/wekers/time.sh dir 2>/dev/null}${color}
+${voffset 2}${font Liberation Sans:size=8:style=bold}${color 3cbf9a} --> ${color CCCCDE}${execi 180 sh ~/.conky/wekers/time.sh wname 2>/dev/null}${color 777888}${font Liberation Sans:size=8:style=bold}${voffset -18}${goto 258}${exec sh ~/.conky/wekers/time.sh atext}${font Liberation Sans:style=bold:size=8} ${color AAAAAA}${if_match ${exec sh ~/.conky/wekers/time.sh at}>32}${color f9b432} ± ${exec sh ~/.conky/wekers/time.sh at}°${else}${if_match ${exec sh ~/.conky/wekers/time.sh at}<15}${color 63b9e0} ± ${exec sh ~/.conky/wekers/time.sh at}°${else}${if_match ${exec sh ~/.conky/wekers/time.sh at}>32}${color fb9b00} ± ${exec sh ~/.conky/wekers/time.sh at}°${else}${if_match ${exec sh ~/.conky/wekers/time.sh at}>28}${color f4e130} ± ${exec sh ~/.conky/wekers/time.sh at}°${color AAAAAA}${else}${if_match ${exec sh ~/.conky/wekers/time.sh at}>14}${color 9a9bab} ± ${exec sh ~/.conky/wekers/time.sh at}°${endif}${endif}${endif}${endif}${endif}${color}${font}
+${voffset 11}${font Liberation Sans:size=8:style=bold}${color 77bfe5}${execi 130 sh ~/.conky/wekers/time.sh precipitation 2>/dev/null}
+\
+# 
+# Moon part 
+# ========
+${voffset -4}${color 666666}${hr}${color}
+${font Liberation Sans:size=8:style=bold}${goto 62}${voffset 18}${color ecdfdd}${execi 600 sh ~/.conky/wekers/GetMoon.sh > /dev/null 2>&1}${execi 180 sed -n -e '1p' ~/.conky/wekers/raw 2>/dev/null} ${execi 610 grep "Illumination" ~/.conky/wekers/raw 2>/dev/null | cut -d':' -f2 | sed 's/^ *//g' 2>/dev/null}
+${font Liberation Sans:size=8:style=bold}${goto 230}${voffset -28}${color 667733}${execi 620 sh ~/.conky/wekers/time.sh mnext 2>/dev/null}
+${goto 230}${voffset 20}${color 669866}${execi 630 sh ~/.conky/wekers/time.sh mnextfull 2>/dev/null}${color}
+# 
+# Moon Image
+# ========
+${image ~/.conky/wekers/moon.jpg -p 10,172 -s 42x42 -n}
+${voffset -12}${color 666666}${hr}${color}
+# 
+# Image today
+# ========
+${execi 190 sh ~/.conky/wekers/time.sh img 2>/dev/null}
+${image ~/.cache/weather.png -p 265,13 -s 100x100 -n}
+# 
+# Forecast max / min 
+# ========
+${voffset -17}${font Mono:size=10}${goto 10}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 1max 2>/dev/null}°
+${voffset -14}${goto 150}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 2max 2>/dev/null}°
+${voffset -14}${goto 280}${color FF8C00}${execi 610 sh ~/.conky/wekers/time.sh 3max 2>/dev/null}°
+${voffset 12}${goto 10}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 1min 2>/dev/null}°
+${voffset -15}${goto 150}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 2min 2>/dev/null}°
+${voffset -14}${goto 280}${color 00BFFF}${execi 610 sh ~/.conky/wekers/time.sh 3min 2>/dev/null}°
+# 
+# Print days
+# ========
+${color cfafef}${voffset 18}${goto 3} ${execi 1000 date --date="1 day" | cut -c1-4 | tr '[:lower:]' '[:upper:]'}
+${voffset -16}${goto 150}${execi 1000 date --date="2 day" | cut -c1-4 | tr '[:lower:]' '[:upper:]'}
+${voffset -16}${goto 280}${execi 1000 date --date="3 day" | cut -c1-4 | tr '[:lower:]' '[:upper:]'}${color}
+\
+# 
+# Print forecast
+# ========
+${voffset -5}${color 666666}${hr}${color}
+${font Concert One:size=8}
+${voffset -10}${goto 10}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-1 2>/dev/null}${color}
+${voffset -8}${goto 150}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-2 2>/dev/null}${color}
+${voffset -8}${goto 280}${color ccddfe}${execi 110 sh ~/.conky/wekers/time.sh cast-3 2>/dev/null}${color}
+${color 666666}${hr}${color}
+# 
+# Day icons 
+# ========
+${execi 310 sh ~/.conky/wekers/time.sh weather-1 2>/dev/null}
+${image ~/.cache/weather-1.png -p 40,225 -s 80x80 -n}
+${execi 310 sh ~/.conky/wekers/time.sh weather-2 2>/dev/null}
+${image ~/.cache/weather-2.png -p 180,225 -s 80x80 -n}
+${execi 310 sh ~/.conky/wekers/time.sh weather-3 2>/dev/null}
+${image ~/.cache/weather-3.png -p 310,225 -s 80x80 -n}
+\
+# 
+# Wind icon
+# ========
+${execi 260 sh ~/.conky/wekers/time.sh wicon 2>/dev/null}
+${image ~/.cache/wind.png -p 145,100 -s 40x40 -n}
+#
+# End Weather Code
+# ================
+#
+# ================================
+# SYSTEM
+# ================================
+${voffset -65}${font}${color0}Linux Kernel: ${color8}${kernel} on ${exec cat /etc/slackware-version}
+${color0}CPU Details: ${font Mono:size=10}${color8}${exec cat /proc/cpuinfo | grep 'model name' | sed -e 's/model name.*: //' | sed -e 's/(R)//' | sed -e 's/(TM)//'| uniq | sed 's/CPU//g' | sed -e 's/@//' | sed 's/0 @//g'}
+${font}${color0}Architecture:${color8} ${machine} ${color0}Current Freq:${color FEFAC0} $freq(MHz) 
+${font}${color0}CPU Cores:${color8} ${exec lscpu -b -p=Core,Socket | grep -v '^#' | sort -u | wc -l} ${color 00BFFF}- ${color0}Threads:${color8} ${exec lscpu | grep '^CPU(s):' | awk '{print $2}'}${font}${color2}  ${stippled_hr}
+${voffset -3}${font}${color2}${hr 1}
+# 
+# CPU bars
+# Line 1 (CPU1 / CPU2 / CPU3)
+# ========
+${color cccccc}${font Mono:size=8}${voffset 1}C1 ${goto 140}C2 ${goto 284}C3 ${font}${voffset -7}
+${if_match ${cpu cpu1} > 80}${color }\
+${else}${if_match ${cpu cpu1} > 60}${color ff8800}\
+${else}${if_match ${cpu cpu1} > 40}${color e6c200}\
+${else}${color AAAAAA}${endif}${endif}${endif}\
+${cpubar cpu1 9,116}${color}${font :size=7,5:style=bold}${voffset -3}${goto 52}${cpu cpu1}%${font}${color}\
+${goto 140}\
+${voffset -2}${if_match ${cpu cpu2} > 80}${color ff3300}\
+${else}${if_match ${cpu cpu2} > 60}${color ff8800}\
+${else}${if_match ${cpu cpu2} > 40}${color e6c200}\
+${else}${color AAAAAA}${endif}${endif}${endif}\
+${cpubar cpu2 9,116}${color}${font :size=7,5:style=bold}${voffset -3}${goto 190}${cpu cpu2}%${font}${color}\
+${goto 284}\
+${voffset -2}${if_match ${cpu cpu3} > 80}${color ff3300}\
+${else}${if_match ${cpu cpu3} > 60}${color ff8800}\
+${else}${if_match ${cpu cpu3} > 40}${color e6c200}\
+${else}${color AAAAAA}${endif}${endif}${endif}\
+${cpubar cpu3 9,116}${color}${font :size=7,5:style=bold}${voffset -3}${goto 335}${cpu cpu3}%${font}${color}
+# 
+# Line 2 (CPU4 / CPU5 / CPU6)
+# ========
+${color cccccc}${font Mono:size=8}${voffset 1}C4 ${goto 140}C5 ${goto 284}C6 ${font}${voffset -7}
+${if_match ${cpu cpu4} > 80}${color ff3300}\
+${else}${if_match ${cpu cpu4} > 60}${color ff8800}\
+${else}${if_match ${cpu cpu4} > 40}${color e6c200}\
+${else}${color AAAAAA}${endif}${endif}${endif}\
+${cpubar cpu4 9,116}${color}${font :size=7,5:style=bold}${voffset -3}${goto 52}${cpu cpu4}%${font}${color}\
+${goto 140}\
+${voffset -2}${if_match ${cpu cpu5} > 80}${color ff3300}\
+${else}${if_match ${cpu cpu5} > 60}${color ff8800}\
+${else}${if_match ${cpu cpu5} > 40}${color e6c200}\
+${else}${color AAAAAA}${endif}${endif}${endif}\
+${cpubar cpu5 9,116}${color}${font :size=7,5:style=bold}${voffset -3}${goto 190}${cpu cpu5}%${font}${color}\
+${goto 284}\
+${voffset -2}${if_match ${cpu cpu6} > 80}${color ff3300}\
+${else}${if_match ${cpu cpu6} > 60}${color ff8800}\
+${else}${if_match ${cpu cpu6} > 40}${color e6c200}\
+${else}${color AAAAAA}${endif}${endif}${endif}\
+${cpubar cpu6 9,116}${color}${font :size=7,5:style=bold}${voffset -3}${goto 335}${cpu cpu6}%${font}${color}
+${color2}${hr 1}
+${voffset 3}${color0}RAM used:${color8}${alignc 140} ${mem} ${color yellow1}($memperc%)${goto 210}${alignr 0}${color0}CPU Temp: ${color8}${execi 25 sensors \
+| awk -F'[+.°]' '/Package id 0|Tdie|CPU/ {print $2; exit}'}°C
+${color0}Available RAM:${color8}${goto 135}${memmax}${color2} ${stippled_hr}
+${color9}${cpugraph 3dba19 aecf4c -t -l}
+# 
+# GPU
+# ========
+${voffset -4}${if_existing /proc/driver/nvidia/version}${voffset 3}${color1}Nvidia Gfx card ${color2}${hr}
+${voffset 1}${color0}GPU Gfx Model:${color8}${goto 130}${exec nvidia-smi --query-gpu=gpu_name --format=csv,noheader,nounits}
+${color0}Core Clock: ${color8}${execi 7 nvidia-smi --query-gpu=clocks.gr --format=csv,noheader,nounits} MHz ${goto 214}${color0}Temp:${color8} ${execi 8 nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits}°C
+${color0}Mem Clock : ${color8}${execi 15 nvidia-smi --query-gpu=clocks.mem --format=csv,noheader,nounits} MHz ${goto 214}${color0}VRAM:${color8} ${exec nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits
+}MB${endif}
+#
+# NETWORK
+# ========
+${color2}${hr 0.5}
+${if_existing /proc/net/route eth0}${voffset 3}${color1}Network ${color}($nodename) ${color2}${hr}
+${color}eth0: ${color0}Down:${color yellow1} ${downspeed eth0}/s${color0}${goto 210}Up:${color OrangeRed1} ${upspeed eth0}/s
+${color9}${downspeedgraph eth0 24,193 000000 91ec31} ${color9}${upspeedgraph eth0 24,193 000000 ec3131}
+${color0}LAN IP: ${color}${goto 70}${addr eth0}${if_gw}${goto 220}${color0} GW: ${goto 265}${color}${gw_ip}${endif}
+# Network
+${color0}WAN IP: ${color}${goto 70}${execi 3600 curl -s https://api.ipify.org}${goto 220}${color0}DNS: ${goto 265}${color}${nameserver}
+${color0}  IPV6: ${font Bitstream Vera Sans Mono:size=10}${color8}${goto 70}${execi 36000 /sbin/ip addr show dev eth0 | sed -n 's/^.*inet6 \([^ ]*\)\/.*$/\1/p' | head -n1}${font}${endif}
+# 
+# FILE SYSTEMS
+# ================================
+${voffset -3}${color2}${hr 0.5}
+${voffset 1}${color1}File Systems ${color2}${hr}
+# -------- Root --------
+${voffset 1}${font}${color0}Root${goto 245}${font :size=10}${fs_used_perc /}%${font}
+${if_match ${fs_used_perc /} >= 80}${color ff3300}\
+${else}${if_match ${fs_used_perc /} >= 60}${color ffcc00}\
+${else}${color 66cc66}${endif}${endif}\
+${fs_bar 6,260 /}${color}
+${color8}${fs_used /} / ${fs_size /}\
+${voffset 6}
+# -------- Home --------
+${color0}Home${goto 245}${font :size=10}${fs_used_perc /home}%${font}
+${if_match ${fs_used_perc /home} >= 80}${color ff3300}\
+${else}${if_match ${fs_used_perc /home} >= 60}${color ffcc00}\
+${else}${color 66cc66}${endif}${endif}\
+${fs_bar 6,260 /home}${color}
+${color8}${fs_used /home} / ${fs_size /home}\
+${voffset 6}
+# -------- Windows C --------
+${color0}Windows (C:)${goto 245}${font :size=10}${fs_used_perc /disk1/windows/C}%${font}
+${if_match ${fs_used_perc /disk1/windows/C} >= 80}${color ff3300}\
+${else}${if_match ${fs_used_perc /disk1/windows/C} >= 60}${color ffcc00}\
+${else}${color 66cc66}${endif}${endif}\
+${fs_bar 6,260 /disk1/windows/C}${color}
+${color8}${fs_used /disk1/windows/C} / ${fs_size /disk1/windows/C}\
+${voffset 8}
+# 
+# Disk
+# ========
+${voffset -1}${color1}Disk IO ${color2}${hr}
+${voffset 1}${color0}dev${alignr 150}write${alignr 110}read${alignr 87}temp
+${color BBBBBB}sda${goto 150}${color yellow1}${diskio_write sda}${alignr 50}${color8}${diskio_read sda}${alignr 20}${color BBBBBB}${hddtemp /dev/sda}°C${alignr 5}${color9}${diskiograph sda 12,70 9855a3 5e066c 0 -t -l}
+${color BBBBBB}sdb${goto 150}${color yellow1}${diskio_write sdb}${alignr 50}${color8}${diskio_read sdb}${alignr 20}${color BBBBBB}${hddtemp /dev/sdb}°C${alignr 5}${color9}${diskiograph sdb 12,70 9855a3 5e066c 0 -t -l}
+#
+# Proc and Mem usage nativas
+# ========
+${voffset 3}${color1}Processes:${color} ${processes}  ${color1}Running:${color red} ${running_processes} ${color2}${hr 1}
+${voffset 1}${color0}${alignc} ( Top 3 (CPU) )
+${color0}NAME${alignr}CPU%        MEM%
+${color BBBBBB}${top name 1}${alignr}${top cpu 1}      ${top mem 1}
+${color BBBBBB}${top name 2}${alignr}${top cpu 2}      ${top mem 2}
+${color BBBBBB}${top name 3}${alignr}${top cpu 3}      ${top mem 3}
+${voffset 1}${color0}${alignc} ( Top 5 (MEM) )
+NAME${alignr}CPU%        MEM%
+${color BBBBBB}${top_mem name 1}${alignr}${top_mem cpu 1}      ${top_mem mem 1}
+${top_mem name 2}${alignr}${top_mem cpu 2}      ${top_mem mem 2}
+${top_mem name 3}${alignr}${top_mem cpu 3}      ${top_mem mem 3}
+${top_mem name 4}${alignr}${top_mem cpu 4}      ${top_mem mem 4}
+${top_mem name 5}${alignr}${top_mem cpu 5}      ${top_mem mem 5}
+${voffset -3}${color2}${hr 1}
+# ================================
+# Get Weather data
+# secret api on ~/.config/conky/secrets.conf
+# chmod 600 ~/.config/conky/secrets.conf
+# OWM_APPID=YOUR_API_KEY
+# ================================
+${execi 480 sh -c '. ~/.config/conky/secrets.conf; curl -s "https://api.openweathermap.org/data/2.5/weather?q=joinville,br&units=metric&lang=pt&mode=xml&appid=$OWM_APPID" | xmllint --format - > ~/.cache/weather_current_aux.xml'}
+${execi 280 if grep -q current ~/.cache/weather_current_aux.xml; then cp ~/.cache/weather_current_aux.xml ~/.cache/weather_current.xml; fi}  
+${execi 480 sh -c '. ~/.config/conky/secrets.conf; curl -s "https://api.openweathermap.org/data/2.5/forecast?q=joinville,br&units=metric&lang=pt&mode=xml&appid=$OWM_APPID" | xmllint --format - > ~/.cache/weather_aux.xml'}
+${execi 280 if grep -q weatherdata ~/.cache/weather_aux.xml; then cp ~/.cache/weather_aux.xml ~/.cache/weather.xml; fi}  
+]];
