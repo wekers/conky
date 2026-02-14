@@ -1,18 +1,41 @@
 # Conky – Modern Desktop Monitor (Lua-free, Conky ≥ 1.22)
 
-> **Version 2.0** – Complete migration from legacy Conky 1.10 + Lua to a **pure Conky 1.22+ configuration**, no Lua required.
+![Version](https://img.shields.io/github/v/tag/wekers/conky?label=version)
+![Release](https://img.shields.io/github/release/wekers/conky)
+![License](https://img.shields.io/github/license/wekers/conky)
+![Conky](https://img.shields.io/badge/Conky-1.22+-blue)
+![Lua](https://img.shields.io/badge/Lua-not%20required-success)
+![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)
+![Issues](https://img.shields.io/github/issues/wekers/conky)
+![Last Commit](https://img.shields.io/github/last-commit/wekers/conky)
+
+---
+
+> **Status:** Stable  
+> **Current Version:** v2.0  
+> **Legacy Version:** v1.10 (Lua-based, archived)
+
+---
+
+## Language
+
+- 🇺🇸 You are reading the English version.
+- 🇧🇷 [Portuguese version](README.pt-BR.md)
+
+---
+
+> **Version 2.0** – Complete migration from legacy Conky 1.10 + Lua to a **pure Conky 1.22+ configuration**, no language Lua required.
 
 This project provides a **modern, elegant, and highly customizable Conky setup**, featuring:
 
-- Weather (OpenWeatherMap)
-- Moon phases (local generation, no NASA dependency)
-- CPU / RAM / Disk / Network monitoring
-- NVIDIA GPU stats (optional)
-- Multi-resolution layouts (1080p / 2K)
-- Multi-language support (EN / PT-BR auto-detected)
-- Fully **Lua-free** configuration
-
----
+- 🌦️ Weather (OpenWeatherMap)
+- 🌙 Moon phases (local generation, no NASA dependency)
+- 📊 CPU / RAM / Disk / Network monitoring
+- 🧩 NVIDIA GPU stats (optional)
+- 🖥️ Multi-resolution layouts (1080p / 2K)
+- 🌍 Multi-language support (EN / PT-BR auto-detected)
+- ❌ Fully **Lua-free** configuration
+- 🚀 Compatible with **AppImage** (no installation required)
 
 ## 📦 Repository Structure
 
@@ -51,6 +74,11 @@ Legacy support is preserved in:
 - **Tag:** `v1.10-legacy`
 
 ---
+
+## Versioning
+
+This project follows **Semantic Versioning** and documents all notable changes
+in [CHANGELOG.md](CHANGELOG.md).
 
 ## 🖥️ Screenshots
 
@@ -114,7 +142,7 @@ The key is **never hardcoded** in `.conkyrc`.
 
 ---
 
-## 🧩 Moon Phase System (Offline)
+## 🌙 Moon Phase System (Offline)
 
 Moon phases are generated **locally**, no HTTP requests.
 
@@ -128,6 +156,12 @@ Scripts involved:
 - `lune_die.sh`
 - `moon.pl`
 - `moon_age.pl`
+
+Internal Scripts
+
+- `time.sh`  
+  Central weather, wind, moon, and localization logic.
+  All data parsing and language switching happens here.
 
 ---
 
@@ -226,6 +260,15 @@ Applies to:
 ---
 
 ## 🧠 Design Philosophy (v2.0)
+
+This project was fully refactored in version 2.0 due to:
+
+- Upstream API changes (NASA / Moon data)
+- Conky Lua instability and maintenance cost
+- Desire for a portable, AppImage-friendly setup
+
+Version 2.0 removes all Lua dependencies and relies only on:
+Bash, Perl (local), and native Conky features.
 
 - ❌ No Lua
 - ✅ Native Conky objects
