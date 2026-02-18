@@ -3,7 +3,7 @@
 # File: time.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-02-12
+# Last modified: 2026-02-18
 # -------------------------------------------------------------------
 # Weather and Moon data manipulation for Conky
 # Compatible with Linux / FreeBSD
@@ -102,6 +102,7 @@ case "$LANG_CODE" in
         mm="mm"
         feels="Sensação Térmica"
         cloud_text="Cobertura de Nuvens"
+        no_wind="Sem vento"
         LABEL_HUMIDITY="Umidade"
 	LABEL_WIND="Ventos à"
 
@@ -124,6 +125,7 @@ case "$LANG_CODE" in
         feels="    Feels Like"
         cloud_text="Cloud Cover"
         windv=$(xml_current "speed" | cut -d'"' -f6)
+        no_wind="No wind"
         LABEL_HUMIDITY="Humidity"
 	LABEL_WIND="Wind at"
 	;;
@@ -167,13 +169,7 @@ case "$1" in
 
         # If wind speed is zero or empty → no wind
         if [ -z "$speed" ] || awk "BEGIN {exit !($speed == 0)}" || [ "$speed" = "Setting" ]; then
-           
-           if [ "$lang" = "pt-br" ]; then
-               echo "Sem vento"
-           else
-               echo "No wind"
-           fi
-           
+          echo "$no_wind"
         else
           echo "$windv"
         fi
