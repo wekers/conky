@@ -3,7 +3,7 @@
 # File: time.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-02-18
+# Last modified: 2026-02-24
 # -------------------------------------------------------------------
 # Weather and Moon data manipulation for Conky
 # Compatible with Linux / FreeBSD
@@ -168,7 +168,7 @@ case "$1" in
         name=$(xml_current "speed" | awk -F'"' 'NF>=6 {print $6}')
 
         # If wind speed is zero or empty → no wind
-        if [ -z "$speed" ] || awk "BEGIN {exit !($speed == 0)}" || [ "$speed" = "Setting" ]; then
+        if [ -z "$speed" ] || awk "BEGIN {exit !($speed == 0)}" || [ "$speed" = "Setting" ] || [ "$name" = "Setting" ]; then
           echo "$no_wind"
         else
           echo "$windv"
