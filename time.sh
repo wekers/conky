@@ -3,7 +3,7 @@
 # File: time.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-02-24
+# Last modified: 2026-03-03
 # -------------------------------------------------------------------
 # Weather and Moon data manipulation for Conky
 # Compatible with Linux / FreeBSD
@@ -223,7 +223,13 @@ case "$1" in
         line4=$(sed -n '4p' "$MOON_FILE")
 
         if [ -n "$line3" ] && [ -n "$line4" ]; then
-            echo "   $prox $line3 --> $line4"
+            if [[ "$line2" =~ ^$on[[:space:]] ]]; then
+	      # relative time (em / in) → dont print Next/Próx
+	      echo "   $line3 --> $line4"
+	    else
+	      # absolute date → print Next/Próx
+	      echo "   $prox $line3 --> $line4"
+	    fi
         fi
         ;;
 
@@ -232,7 +238,13 @@ case "$1" in
         line2=$(sed -n '2p' "$MOON_FILE")
 
         if [ -n "$line1" ] && [ -n "$line2" ]; then
-            echo "   $prox $line1 --> $line2"
+            if [[ "$line2" =~ ^$on[[:space:]] ]]; then
+	      # relative time (em / in) → dont print Next/Próx
+	      echo "   $line1 --> $line2"
+	    else
+	      # absolute date → print Next/Próx
+	      echo "   $prox $line1 --> $line2"
+	    fi
         fi
         ;;
 
