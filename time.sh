@@ -3,7 +3,7 @@
 # File: time.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-03-17
+# Last modified: 2026-03-18
 # -------------------------------------------------------------------
 # Weather and Moon data manipulation for Conky
 # Compatible with Linux / FreeBSD
@@ -14,7 +14,7 @@ CACHE_CURRENT="$HOME/.cache/weather_current.xml"
 CACHE_FORECAST="$HOME/.cache/weather.xml"
 MOON_FILE="$DirShell/moon_phase_die"
 
-
+[ ! -f "$CACHE_CURRENT" ] && exit 0
 
 # -------------------------------------------------------
 # Helper Functions
@@ -67,22 +67,21 @@ forecast_block() {
 forecast_cast() {
     local day="$1"
     local time
+
     time=$(date --date="$day day" +%Y-%m-%dT12:00:00)
 
     awk -v t="$time" '
         $0 ~ "from=\""t"\"" {
             while (getline) {
                 if ($0 ~ /symbol number=/) {
-                    match($0, /name="([^"]+)"/, arr)
-                    if (arr[1] != "") {
-                        print arr[1]
-                        exit
-                    }
+                    print $0
+                    exit
                 }
                 if ($0 ~ /<\/time>/) exit
             }
         }
     ' "$CACHE_FORECAST" \
+    | sed -n 's/.*name="\([^"]*\)".*/\1/p' \
     | cut -d'.' -f1 \
     | awk '{print toupper(substr($0,1,1)) substr($0,2)}'
 }
@@ -223,7 +222,7 @@ case "$1" in
         line4=$(sed -n '4p' "$MOON_FILE")
 
         if [ -n "$line3" ] && [ -n "$line4" ]; then
-            if [[ "$line2" =~ ^$on[[:space:]] ]]; then
+            if [[ "$line4" =~ ^$on[[:space:]] ]]; then
 	      # relative time (em / in) → dont print Next/Próx
 	      echo "   $line3 --> $line4"
 	    else
