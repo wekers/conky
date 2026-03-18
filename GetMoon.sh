@@ -181,6 +181,6 @@ echo "$PHASE_NAME" > "$RAW"
 echo "Illumination : $ILLUM%" >> "$RAW"
 
 # Update next New/Full Moon info
-sh ${DirShell}/lune_die.sh > /dev/null 2>&1
+bash ${DirShell}/lune_die.sh > /dev/null 2>&1
 
 exit 0
