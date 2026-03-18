@@ -9,6 +9,7 @@
 # Compatible with Linux / FreeBSD
 # -------------------------------------------------------------------
 
+export LC_ALL=C
 DirShell="$(cd "$(dirname "$0")" && pwd)"
 CACHE_CURRENT="$HOME/.cache/weather_current.xml"
 CACHE_FORECAST="$HOME/.cache/weather.xml"
