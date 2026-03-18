@@ -3,13 +3,13 @@
 # File: time.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-03-03
+# Last modified: 2026-03-17
 # -------------------------------------------------------------------
 # Weather and Moon data manipulation for Conky
 # Compatible with Linux / FreeBSD
 # -------------------------------------------------------------------
 
-DirShell="$HOME/.conky/wekers"
+DirShell="$(cd "$(dirname "$0")" && pwd)"
 CACHE_CURRENT="$HOME/.cache/weather_current.xml"
 CACHE_FORECAST="$HOME/.cache/weather.xml"
 MOON_FILE="$DirShell/moon_phase_die"
