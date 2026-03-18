@@ -3,7 +3,7 @@
 # File: lune_die.sh
 # Type: Bash Shell Script
 # Author: Fernando Gilli
-# Last modified: 2026-01-29
+# Last modified: 2026-03-15
 # -------------------------------------------------------------------
 #
 # Description:
@@ -14,8 +14,7 @@
 # -------------------------------------------------------------------
 
 # Working directory
-DirShell="$HOME/.conky/wekers"
-cd "$DirShell" || exit 1
+DirShell="$(cd "$(dirname "$0")" && pwd)"
 
 FILE1="$DirShell/moon_phase_die"
 FILE2="$DirShell/raw"
@@ -26,8 +25,6 @@ touch "$FILE1"
 # Execute phase calculation
 perl "$DirShell/moon.pl"
 
-# Small delay to ensure file write completion
-sleep 1
 
 # -------------------------------------------------------
 # Language block
