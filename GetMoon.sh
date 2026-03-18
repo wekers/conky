@@ -3,7 +3,7 @@
 # File: GetMoon.sh                                       /\
 # Type: Bash Shell Script                               /_.\
 # By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
-# Last modified:2026-02-04                     -~^    /______\`~~-^~:
+# Last modified:2026-03-15                     -~^    /______\`~~-^~:
 # -------------------------------------------------------------------
 #
 # Description:
@@ -33,7 +33,13 @@
 
 export LC_ALL=C   # Force dot decimal separator for awk/ImageMagick consistency
 
-DirShell="$HOME/.conky/wekers"
+if command -v magick >/dev/null 2>&1; then
+  IM="magick"
+else
+  IM="convert"
+fi
+
+DirShell="$(cd "$(dirname "$0")" && pwd)"
 RAW="$DirShell/raw"
 IMG="$DirShell/moon.jpg"
 LIGHT="$DirShell/light.png"
@@ -124,7 +130,7 @@ COS=$(awk -v r="$RAD" 'BEGIN{print cos(r)}')
 SIN=$(awk -v r="$RAD" 'BEGIN{print sin(r)}')
 
 # Render light mask using rotated coordinate system
-magick -size ${SIZE}x${SIZE} xc:black \
+$IM -size ${SIZE}x${SIZE} xc:black \
   -fx "dx=(i-$CENTER)/$RADIUS;
        dy=(j-$CENTER)/$RADIUS;
        xr=dx*$COS - dy*$SIN;
@@ -134,12 +140,12 @@ magick -size ${SIZE}x${SIZE} xc:black \
   "$LIGHT"
 
 # Apply slight blur to soften terminator transition
-magick "$LIGHT" -blur 0x0.8 "$LIGHT"
+$IM "$LIGHT" -blur 0x0.8 "$LIGHT"
 
 # -------------------------------------------------------
 # Apply mask to lunar texture
 # -------------------------------------------------------
-magick "$TEXTURE" -resize ${SIZE}x${SIZE} \
+$IM "$TEXTURE" -resize ${SIZE}x${SIZE} \
   "$DirShell/texture_resized.png"
 
 # Subtle gamma correction depending on illumination
@@ -152,7 +158,7 @@ else
     GAMMA=1.00
 fi
 
-magick "$DirShell/texture_resized.png" "$LIGHT" \
+$IM "$DirShell/texture_resized.png" "$LIGHT" \
   -compose Multiply -composite \
   -gamma $GAMMA \
   "$IMG"
@@ -162,7 +168,7 @@ magick "$DirShell/texture_resized.png" "$LIGHT" \
 # Southern Hemisphere requires horizontal mirroring
 # -------------------------------------------------------
 if [[ "$HEMISPHERE" == "s" ]]; then
-    magick "$IMG" -flop "$IMG"
+    $IM "$IMG" -flop "$IMG"
 fi
 
 # Cleanup temporary files
