@@ -3,7 +3,7 @@
 -- Resolution: 2K - 2560x1440                             /\
 -- Type: conky main file                                 /_.\
 -- By Fernando Gilli fernando<at>wekers(dot)org    _,.-'/ `",\'-.,_
--- Last modified:2026-03-17                     -~^    /______\`~~-^~:
+-- Last modified:2026-03-18                     -~^    /______\`~~-^~:
 -- ------------------------
 -- Main File to Run
 -- / OS : $Linux, $FreeBSD (X Window)
@@ -262,14 +262,15 @@ ${else}${color 66cc66}${endif}${endif}\
 ${fs_bar 6,260 /home}${color}
 ${color8}${fs_used /home} / ${fs_size /home}\
 ${voffset 6}
-# -------- Windows C --------
-${color0}Windows (C:)${goto 245}${font :size=10}${fs_used_perc /disk1/windows/C}%${font}
-${if_match ${fs_used_perc /disk1/windows/C} >= 80}${color ff3300}\
-${else}${if_match ${fs_used_perc /disk1/windows/C} >= 60}${color ffcc00}\
-${else}${color 66cc66}${endif}${endif}\
-${fs_bar 6,260 /disk1/windows/C}${color}
-${color8}${fs_used /disk1/windows/C} / ${fs_size /disk1/windows/C}\
-${voffset 8}
+# -------- Windows C (optional) --------
+# Uncomment if mounted at /disk1/windows/C
+#${color0}Windows (C:)${goto 245}${font :size=10}${fs_used_perc /disk1/windows/C}%${font}
+#${if_match ${fs_used_perc /disk1/windows/C} >= 80}${color ff3300}\
+#${else}${if_match ${fs_used_perc /disk1/windows/C} >= 60}${color ffcc00}\
+#${else}${color 66cc66}${endif}${endif}\
+#${fs_bar 6,260 /disk1/windows/C}${color}
+#${color8}${fs_used /disk1/windows/C} / ${fs_size /disk1/windows/C}\
+#${voffset 8}
 # 
 # Disk
 # ========
