@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
+## [2.1.0] – 2026-03-20
+
+### Added
+- Cross-distro installation script (`install.sh`) with safe dependency handling
+- First-run initialization script (`init.sh`) for weather cache setup
+- Start/stop/restart lifecycle control in `conky.sh`
+- Portuguese README (pt-BR) with full documentation
+- CHANGELOG.md for structured version tracking
+
+### Changed
+- Replaced hardcoded paths with dynamic relative paths across all scripts
+- Refactored Conky configs (1080p / 2K) to improve portability and maintainability
+- Improved `conky.sh` with:
+  - Automatic resolution detection (1080p / 2K)
+  - Safe initialization flow
+  - Prevention of multiple instances
+- Standardized script execution (removed `sh` in favor of direct/bash execution)
+- Enhanced weather initialization flow and error handling
+- Improved network handling and configurability
+- Updated README with clearer versioning and project structure
+
+### Fixed
+- Locale issues affecting numeric parsing (`LC_ALL=C`)
+- Shell compatibility issues (ensuring Bash is used where required)
+- AWK compatibility across different distributions
+- Working directory inconsistencies in scripts (`time.sh`, `lune_die.sh`, etc.)
+- Weather initialization edge cases
+- Wind speed and forecast parsing inconsistencies
+
+### Improved
+- Cross-distribution compatibility (Ubuntu, Mint, Slackware, etc.)
+- ImageMagick compatibility:
+  - Support for both `magick` (v7+) and `convert` (v6)
+- Moon rendering pipeline robustness
+- Error handling and script resilience
+- Overall project portability and maintainability
+
+### Removed
+- Legacy assumptions about fixed paths (`~/.conky/wekers`)
+- Inconsistent script invocation patterns (`sh script.sh`)
+
+--- 
 
 ## [2.0.0] – 2026-02-08
 

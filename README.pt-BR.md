@@ -1,10 +1,10 @@
-# Conky – Monitor de Desktop Moderno (Sem Lua, Conky ≥ 1.22)
+# Conky – Monitor de Desktop Moderno (sem dependência de scripts Lua, Conky ≥ 1.22)
 
 ![Versão](https://img.shields.io/github/v/tag/wekers/conky?label=version)
 ![Release](https://img.shields.io/github/release/wekers/conky)
 ![Licença](https://img.shields.io/github/license/wekers/conky)
 ![Conky](https://img.shields.io/badge/Conky-1.22+-blue)
-![Lua](https://img.shields.io/badge/Lua-não%20requerido-success)
+![Lua](https://img.shields.io/badge/Lua-not%20required-success)
 ![Plataforma](https://img.shields.io/badge/platform-Linux-lightgrey)
 ![Issues](https://img.shields.io/github/issues/wekers/conky)
 ![Último Commit](https://img.shields.io/github/last-commit/wekers/conky)
@@ -12,30 +12,59 @@
 ---
 
 > **Status:** Estável  
-> **Versão Atual:** v2.0  
-> **Versão Legada:** v1.10 (baseada em Lua, arquivada)
+> **Versão:** v2.1  
+> **Filosofia:** Dependências mínimas, portabilidade máxima
 
 ---
 
 ## Idioma
 
-- 🇺🇸 [English version](README.md)
-- 🇧🇷 Você está lendo a versão em Português.
+- 🇺🇸 [Versão em inglês](README.md)
+- 🇧🇷 Você está lendo a versão em português.
 
 ---
 
-> **Versão 2.0** – Migração completa do (Conky 1.10 legado + Lua) para uma **configuração pura Conky 1.22+**, sem necessidade de usar a línguagem Lua.
+## ✨ Visão Geral
 
-Este projeto fornece uma **configuração moderna, elegante e altamente personalizável do Conky**, com:
+Uma configuração **moderna, elegante e sem dependência de scripts Lua**, projetada para:
 
-- 🌦️ Clima (OpenWeatherMap)
-- 🌙 Fases da lua (geração local, sem dependência da NASA)
+- ⚡ portabilidade (pronta para AppImage)
+- 🧩 scripts modulares
+- 🌍 suporte multilíngue
+- 🖥️ layouts para múltiplas resoluções
+
+### Recursos
+
+- 🌦️ Integração com OpenWeatherMap (API XML)
+- 🌙 Renderização offline das fases da lua (sem APIs externas)
 - 📊 Monitoramento de CPU / RAM / Disco / Rede
-- 🧩 Estatísticas da GPU NVIDIA (opcional)
-- 🖥️ Layouts multi-resolução (1080p / 2K)
-- 🌍 Suporte a múltiplos idiomas (EN / PT-BR detectado automaticamente)
-- ❌ Configuração completamente **sem Lua**
-- 🚀 Compatível com **AppImage** (sem instalação)
+- 🧠 localização inteligente (EN / PT-BR detectada automaticamente)
+- 🖥️ Layouts para 1080p e 2K
+- 🎮 Suporte opcional a GPU NVIDIA
+- ❌ Nenhum script Lua em é necessário
+
+---
+
+## 📸 Capturas de Tela
+
+### 1080p
+
+| EN                                             | PT-BR                                            |
+| ---------------------------------------------- | ------------------------------------------------ |
+| ![captura](printscreen/Conky-1.22-1080p-US.png) | ![captura](printscreen/Conky-1.22-1080p-pt-BR.png) |
+
+### 2K / 2560×1440
+
+| EN                                          | PT-BR                                         |
+| ------------------------------------------- | --------------------------------------------- |
+| ![captura](printscreen/Conky-1.22-2k-US.png) | ![captura](printscreen/Conky-1.22-2k-pt-BR.png) |
+
+### Tela Cheia
+
+![captura](printscreen/Conky-1.22-2k-FullScreen-pt-BR.png)
+
+---
+
 
 ## 📦 Estrutura do Repositório
 
@@ -45,10 +74,15 @@ conky/
 │   ├── .conkyrc_1080p
 │   └── .conkyrc_2k
 ├── images/
-│   ├── ícones do clima
-│   └── ícones de vento
+│   ├── weather icons
+│   └── wind icons
+├── CHANGELOG.md
+├── LICENSE
+├── conky-1.22.2.tar.gz
 ├── fonts/
 ├── printscreen/
+├── init.sh
+├── install.sh
 ├── time.sh
 ├── GetMoon.sh
 ├── lune_die.sh
@@ -56,49 +90,167 @@ conky/
 ├── moon_age.pl
 ├── moon_texture.jpg
 ├── conky.sh
+├── README.pt-BR.md
 └── README.md
 ```
 
 ---
 
-## 🚀 Versões Suportadas
+## 🚀 Início Rápido (Recomendado)
+- ### 🌦️ API do OpenWeatherMap
+  - Os dados meteorológicos usam a **API XML do OpenWeatherMap**.
 
-| Versão             | Status       | Descrição                      |
-| ------------------ | ------------ | ------------------------------ |
-| **v2.0 (main)**    | ✅ Ativo     | Conky **1.22+**, Sem Lua       |
-| **v1.10 (legada)** | 🧊 Congelado | Conky **1.10**, baseado em Lua |
+    > As primeiras **1.000 chamadas de API por dia são GRATUITAS**
 
-O suporte legado é preservado em:
+- ### 1️⃣ Crie sua chave de API
 
-- **Branch:** `legacy-1.10`
-- **Tag:** `v1.10-legacy`
+  👉 [https://openweathermap.org/api](https://openweathermap.org/api)
+
+### 2️⃣ Clone o Projeto:
+```bash
+git clone https://github.com/wekers/conky.git
+cd conky
+
+# Instala dependências automaticamente
+./install.sh
+
+# Configure sua chave de API
+nano ~/.config/conky/secrets.conf
+
+# Inicie o Conky
+./conky.sh
+```
+
+
+### 3️⃣ Configure sua chave de API e sua cidade (cidade,país):
+```ini
+OWM_APPID=YOUR_API_KEY
+OWM_CITY=Sacramento,US
+```
+A chave nunca é definida diretamente no `.conkyrc`.
+
+### 4️⃣ Execute:
+
+```bash
+./conky.sh # start (padrão)
+./conky.sh start
+
+./conky.sh stop
+./conky.sh restart
+```
 
 ---
 
-## Versionamento
+## 🐧 Distribuições Suportadas
 
-Este projeto segue o Versionamento Semântico e documenta todas as mudanças notáveis
-em [CHANGELOG.md](CHANGELOG.md).
+- Ubuntu / Debian
+- Linux Mint
+- Fedora
+- Arch Linux
+- Slackware
+
+O script `install.sh` detecta automaticamente sua distribuição e instala as dependências corretas.
 
 ---
 
-## 🖥️ Capturas de Tela
+## ⚙️ Configuração
 
-### 1080p
+### 🌐 Interface de Rede
 
-| EN                                            | PT-BR                                            |
-| --------------------------------------------- | ------------------------------------------------ |
-| ![print](printscreen/Conky-1.22-1080p-US.png) | ![print](printscreen/Conky-1.22-1080p-pt-BR.png) |
+Comando de autodetecção:
 
-### 2K / 2560×1440
+```bash
+ip route 2>/dev/null | awk '/default/ {print $5; exit}'
+```
 
-| EN                                         | PT-BR                                         |
-| ------------------------------------------ | --------------------------------------------- |
-| ![print](printscreen/Conky-1.22-2k-US.png) | ![print](printscreen/Conky-1.22-2k-pt-BR.png) |
+Edite em `.conkyrc`:
 
-### Fullscreen
+```lua
+template0 = 'eth0'
+```
 
-![print](printscreen/Conky-1.22-2k-FullScreen-pt-BR.png)
+Valores comuns:
+
+| Interface | Descrição         |
+|----------|-------------------|
+| eth0     | Ethernet legada   |
+| enp0s3   | Ethernet moderna  |
+| wlp2s0   | Wi-Fi             |
+
+---
+
+### 🌍 Configuração do Clima
+
+Arquivo:
+
+```bash
+~/.config/conky/secrets.conf
+```
+
+Exemplo:
+
+```ini
+OWM_APPID=YOUR_API_KEY
+OWM_CITY=Salvador,BR
+```
+
+---
+
+### 🌙 Correção do Hemisfério da Lua
+
+Se você estiver no **Hemisfério Norte**, edite:
+
+```bash
+GetMoon.sh
+```
+
+Altere:
+
+```bash
+HEMISPHERE="s"
+```
+
+para:
+
+```bash
+HEMISPHERE="n"
+```
+
+---
+
+## 🧠 Arquitetura
+
+```text
+conky.sh
+   └── init.sh (bootstrap do clima)
+          └── time.sh (lógica central)
+                 ├── parsing do clima
+                 ├── localização
+                 ├── vento + unidades
+                 └── integração da lua
+                        └── GetMoon.sh
+                               └── scripts em perl
+```
+
+### Componentes Principais
+
+| Script      | Responsabilidade                 |
+|-------------|----------------------------------|
+| conky.sh    | ciclo de vida (start/stop/restart) |
+| init.sh     | inicialização do clima           |
+| time.sh     | motor central de processamento   |
+| GetMoon.sh  | renderização da lua              |
+| *.pl        | cálculos astronômicos            |
+
+---
+
+## ▶️ Uso
+
+```bash
+./conky.sh start
+./conky.sh stop
+./conky.sh restart
+```
 
 ---
 
@@ -106,98 +258,59 @@ em [CHANGELOG.md](CHANGELOG.md).
 
 ### Obrigatórios
 
-- **Conky ≥ 1.22**
-- `curl`
-- `xmllint`
-- `perl`
-- `lm-sensors`
+- Conky ≥ 1.22
+- curl
+- lm-sensors
+- bc
+- imagemagick
+- libxml2-utils (xmllint)
+- perl + Astro::MoonPhase
 
-### Opcionais (GPU)
+### Opcionais
 
-- `nvidia-smi` (para GPUs NVIDIA)
+- nvidia-smi (estatísticas da GPU)
 
 ---
 
-## 🌦️ API OpenWeatherMap
+## 🧩 Opções de Instalação
 
-Os dados climáticos usam a **API XML do OpenWeatherMap.**
+---
 
-> As primeiras **1.000 chamadas de API por dia são GRATUITAS**
+### [Opção A - Início Rápido (Recomendado)](#início-rápido-recomendado)
 
-### 1️⃣ Crie sua chave de API
+---
 
-👉 [https://openweathermap.org/api](https://openweathermap.org/api)
-
-### 2️⃣ Crie o arquivo de segredos
+### Opção B – AppImage (Método Fácil Alternativo)
+- Baixe o AppImage em https://github.com/brndnmtthws/conky/releases
+#### Dependências obrigatórias:
+- curl
+- lm-sensors
+- bc
+- imagemagick
+- libxml2-utils (xmllint)
+- perl + Astro::MoonPhase
 
 ```bash
-mkdir -p ~/.config/conky
-nano ~/.config/conky/secrets.conf
-chmod 600 ~/.config/conky/secrets.conf
-```
+Executar apenas a primeira vez:
 
-```ini
-OWM_APPID=YOUR_API_KEY_HERE
-```
+./init.sh
 
-A chave **nunca é codificada** no `.conkyrc`.
+Então:
 
----
-
-## 🌙 Lua & Astronomia - Moon Phase System (Offline)
-
-As fases da lua são geradas **localmente**, sem requisições HTTP.
-
-- Substitui a antiga solução baseada na NASA
-- Funciona tanto na **v1.10 quanto na v2.0**
-- Suporta tradução para PT-BR automaticamente
-
-Scripts envolvidos:
-
-- `GetMoon.sh`
-- `lune_die.sh`
-- `moon.pl`
-- `moon_age.pl`
-
-Scripts Internos
-
-- `time.sh`  
-  Lógica central para clima, vento, lua e localização.
-  Toda a análise de dados e troca de idioma acontece aqui.
-
----
-
-## 🛠️ Opções de Instalação
-
----
-
-### Opção A – AppImage (Recomendada e Fácil)
-
-Sem necessidade de instalação.
-
-```bash
-git clone https://github.com/wekers/conky.git
-cd conky
-# baixe o AppImage de https://github.com/brndnmtthws/conky/releases
-chmod +x conky-ubuntu-24.04-x86_64-v1.22.2.AppImage
-
-./conky-ubuntu-24.04-x86_64-v1.22.2.AppImage -c conkyrc/.conkyrc_2k
-```
-
-Ou para Full HD:
-
-```bash
-./conky-ubuntu-24.04-x86_64-v1.22.2.AppImage -c conkyrc/.conkyrc_1080p
+chmod +x conky-*.AppImage
+./conky-*.AppImage -c conkyrc/.conkyrc_2k
+ou
+./conky-*.AppImage -c conkyrc/.conkyrc_1080p
 ```
 
 ---
 
-### Opção B – Compilar a partir do Código Fonte (Avançado)
+### Opção C - Compilar a Partir do Código-Fonte (Avançado)
 
 #### Pré-instalação
 
 ```bash
-pip3 install pyyaml Jinja
+pip3 install pyyaml Jinja2
 ```
 
 #### Compilação
@@ -227,70 +340,153 @@ cmake \
 make
 sudo make install
 ```
-
----
-
-## ▶️ Executando o Conky
-
-```bash
-./conky.sh
-```
-
-ou manualmente:
-
-```bash
-conky -c conkyrc/.conkyrc_2k
-```
-
 ---
 
 ## 🌍 Suporte a Idiomas
 
-O idioma é detectado automaticamente via LANG.
+Detectado automaticamente via `LANG`.
 
-| LANG    | Saída     |
-| ------- | --------- |
-| `pt_BR` | Português |
-| outros  | Inglês    |
+| LANG    | Saída      |
+|--------|------------|
+| pt_BR  | Português  |
+| others | Inglês     |
 
 Aplica-se a:
 
 - Rótulos do clima
 - Fases da lua
-- Descrições do vento:
-
-## 🧠 Filosofia de Design (v2.0)
-
-Este projeto foi completamente reestruturado na versão 2.0 devido a:
-
-- Mudanças nas APIs upstream (dados da NASA / Lua)
-- Instabilidade do Lua no Conky e custo de manutenção
-- Desejo de uma configuração portátil e compatível com AppImage
-
-A versão 2.0 remove todas as dependências de Lua e depende apenas de:
-Bash, Perl (local) e recursos nativos do Conky.
-
-- ❌ Sem Lua
-- ✅ Objetos nativos do Conky
-- ✅ Configurações portáteisConfigurações portáteis
-- ✅ Manutenção mais fácil
-- ✅ Compatível com Wayland e X11
-- ✅ Gerenciamento seguro de segredos
+- Descrições do vento
 
 ---
 
-## 🧊 Versão Legada (Conky 1.10)
+## 🛠️ Solução de Problemas
 
-Se você ainda usa Conky 1.10:
+### ❌ Clima não aparece
+
+- Verifique a chave de API
+- Verifique o formato da cidade: `city,country`
+- Valide o cache XML:
+
+```bash
+cat ~/.cache/weather_current.xml
+```
+
+---
+
+### ❌ Conky não inicia
+
+- Certifique-se de que os scripts são executáveis:
+
+```bash
+chmod +x *.sh
+```
+
+- NUNCA use:
+
+```bash
+sh script.sh
+```
+
+Use:
+
+```bash
+./script.sh
+```
+
+---
+
+### ❌ Rede mostrando 0
+
+- Interface incorreta em `template0`
+- Execute o comando de detecção e confira no .conkyrc em `template0`
+```bash
+ip route 2>/dev/null | awk '/default/ {print $5; exit}'
+```
+
+---
+
+### ❌ Renderização da lua invertida
+
+- Corrija o hemisfério em `GetMoon.sh`
+
+---
+
+### ❌ xmllint não encontrado
+
+- Instale:
+
+```bash
+sudo apt install libxml2-utils
+```
+
+---
+
+### ❌ Astro::MoonPhase não encontrado
+
+
+- Instale:
+
+```bash
+sudo cpanm Astro::MoonPhase
+```
+
+---
+
+### ❌ Nenhum sensor encontrado
+
+- Execute:
+
+```bash
+sudo sensors-detect
+```
+---
+## 🚀 Versões Compatíveis
+
+| Versão             | Status       | Descrição                       |
+| ------------------ | ------------ | ------------------------------- |
+| **v2.1 (main)**    | ✅ Ativa     | Conky **1.22+**, configuração sem dependência de scripts em Lua |
+| **v1.10 (legacy)** | 🧊 Congelada | Conky **1.10**, linguagem baseada em Lua |
+
+O suporte legado é preservado em:
+
+- **Branch:** `legacy-1.10`
+- **Tag:** `v1.10-legacy`
+
+---
+
+## Versionamento
+
+Este projeto segue o **Versionamento Semântico** e documenta todas as mudanças relevantes
+em [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## 🧠 Filosofia de Design (v2.0)
+
+Este projeto foi totalmente refatorado na versão 2.0 devido a:
+
+- Mudanças na API upstream (NASA / dados da lua)
+- Instabilidade do script Lua no Conky e custo de manutenção
+- Necessidade de portabilidade
+
+A versão 2.0 remove todas as dependências da linguagem Lua e depende apenas de:
+
+- Bash
+- Perl (local)
+- recursos nativos do Conky
+- ❌ Nenhum script em Lua é necessário
+- ✅ Objetos nativos do Conky
+- ✅ Configurações portáteis
+- ✅ Fácil manutenção
+- ✅ Compatível com Wayland e X11
+- ✅ Tratamento seguro de segredos (Secrets)
+
+---
+
+## 🧊 Versão Legada
 
 ```bash
 git checkout legacy-1.10
-```
-
-Tag:
-
-```bash
-git checkout v1.10-legacy
 ```
 
 ---
@@ -298,4 +494,4 @@ git checkout v1.10-legacy
 ## 📜 Licença
 
 Licença MIT  
-© Fernando Gilli
+© WeKeRs
