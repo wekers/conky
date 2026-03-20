@@ -12,8 +12,8 @@
 ---
 
 > **Status:** Stable  
-> **Current Version:** v2.0  
-> **Legacy Version:** v1.10 (Lua-based, archived)
+> **Version:** v2.1  
+> **Philosophy:** Minimal dependencies, maximum portability
 
 ---
 
@@ -24,63 +24,28 @@
 
 ---
 
-> **Version 2.0** – Complete migration from legacy Conky 1.10 + Lua to a **pure Conky 1.22+ configuration**, no language Lua required.
+## ✨ Overview
 
-This project provides a **modern, elegant, and highly customizable Conky setup**, featuring:
+A **modern, elegant and fully Lua-free Conky setup**, designed for:
 
-- 🌦️ Weather (OpenWeatherMap)
-- 🌙 Moon phases (local generation, no NASA dependency)
+- ⚡ portability (AppImage-ready)
+- 🧩 modular scripts
+- 🌍 multi-language support
+- 🖥️ multi-resolution layouts
+
+### Features
+
+- 🌦️ OpenWeatherMap integration (XML API)
+- 🌙 Offline moon phase rendering (no external APIs)
 - 📊 CPU / RAM / Disk / Network monitoring
-- 🧩 NVIDIA GPU stats (optional)
-- 🖥️ Multi-resolution layouts (1080p / 2K)
-- 🌍 Multi-language support (EN / PT-BR auto-detected)
-- ❌ Fully **Lua-free** configuration
-- 🚀 Compatible with **AppImage** (no installation required)
-
-## 📦 Repository Structure
-
-```css
-conky/
-├── conkyrc/
-│   ├── .conkyrc_1080p
-│   └── .conkyrc_2k
-├── images/
-│   ├── weather icons
-│   └── wind icons
-├── fonts/
-├── printscreen/
-├── time.sh
-├── GetMoon.sh
-├── lune_die.sh
-├── moon.pl
-├── moon_age.pl
-├── moon_texture.jpg
-├── conky.sh
-└── README.md
-```
+- 🧠 Smart localization (EN / PT-BR auto-detected)
+- 🖥️ 1080p and 2K layouts
+- 🎮 Optional NVIDIA GPU support
+- ❌ No Lua scripting required
 
 ---
 
-## 🚀 Supported Versions
-
-| Version            | Status    | Description               |
-| ------------------ | --------- | ------------------------- |
-| **v2.0 (main)**    | ✅ Active | Conky **1.22+**, Lua-free |
-| **v1.10 (legacy)** | 🧊 Frozen | Conky **1.10**, Lua-based |
-
-Legacy support is preserved in:
-
-- **Branch:** `legacy-1.10`
-- **Tag:** `v1.10-legacy`
-
----
-
-## Versioning
-
-This project follows **Semantic Versioning** and documents all notable changes
-in [CHANGELOG.md](CHANGELOG.md).
-
-## 🖥️ Screenshots
+## 📸 Screenshots
 
 ### 1080p
 
@@ -100,97 +65,247 @@ in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
+
+## 📦 Repository Structure
+
+```css
+conky/
+├── conkyrc/
+│   ├── .conkyrc_1080p
+│   └── .conkyrc_2k
+├── images/
+│   ├── weather icons
+│   └── wind icons
+├── CHANGELOG.md
+├── LICENSE
+├── conky-1.22.2.tar.gz
+├── fonts/
+├── printscreen/
+├── init.sh
+├── install.sh
+├── time.sh
+├── GetMoon.sh
+├── lune_die.sh
+├── moon.pl
+├── moon_age.pl
+├── moon_texture.jpg
+├── conky.sh
+├── README.pt-BR.md
+└── README.md
+```
+
+---
+
+## 🚀 Quick Start (Recommended)
+- ### 🌦️ OpenWeatherMap API
+  - Weather data uses **OpenWeatherMap XML API**.
+
+    > The first **1,000 API calls per day are FREE**
+
+- ### 1️⃣ Create your API key
+
+  👉 [https://openweathermap.org/api](https://openweathermap.org/api)
+
+### 2️⃣ Clone the Project:
+```bash
+git clone https://github.com/wekers/conky.git
+cd conky
+
+# Install dependencies automatically
+./install.sh
+
+# Configure your API key
+nano ~/.config/conky/secrets.conf
+
+# Start Conky
+./conky.sh
+```
+
+
+### 3️⃣ Configure your API key and your city (city,country):
+```ini
+OWM_APPID=YOUR_API_KEY
+OWM_CITY=Sacramento,US
+```
+The key is **never hardcoded** in `.conkyrc`.
+
+### 4️⃣ Run:
+
+```bash
+./conky.sh # start (default)
+./conky.sh start
+
+./conky.sh stop
+./conky.sh restart
+```
+
+---
+
+## 🐧 Supported Distributions
+
+- Ubuntu / Debian
+- Linux Mint
+- Fedora
+- Arch Linux
+- Slackware
+
+The `install.sh` script automatically detects your distribution and installs the correct dependencies.
+
+---
+
+## ⚙️ Configuration
+
+### 🌐 Network Interface
+
+Auto-detection command:
+
+```bash
+ip route 2>/dev/null | awk '/default/ {print $5; exit}'
+```
+
+Edit in `.conkyrc`:
+
+```lua
+template0 = 'eth0'
+```
+
+Common values:
+
+| Interface | Description       |
+|----------|------------------|
+| eth0     | Legacy ethernet  |
+| enp0s3   | Modern ethernet  |
+| wlp2s0   | Wi-Fi            |
+
+---
+
+### 🌍 Weather Configuration
+
+File:
+
+```bash
+~/.config/conky/secrets.conf
+```
+
+Example:
+
+```ini
+OWM_APPID=YOUR_API_KEY
+OWM_CITY=Salvador,BR
+```
+
+---
+
+### 🌙 Moon Hemisphere Fix
+
+If you are in the **Northern Hemisphere**, edit:
+
+```bash
+GetMoon.sh
+```
+
+Change:
+
+```bash
+HEMISPHERE="s"
+```
+
+to:
+
+```bash
+HEMISPHERE="n"
+```
+
+---
+
+## 🧠 Architecture
+
+```text
+conky.sh
+   └── init.sh (weather bootstrap)
+          └── time.sh (core logic)
+                 ├── weather parsing
+                 ├── localization
+                 ├── wind + units
+                 └── moon integration
+                        └── GetMoon.sh
+                               └── perl scripts
+```
+
+### Core Components
+
+| Script        | Responsibility |
+|--------------|---------------|
+| conky.sh     | lifecycle (start/stop/restart) |
+| init.sh      | weather initialization |
+| time.sh      | central processing engine |
+| GetMoon.sh   | moon rendering |
+| *.pl         | astronomical calculations |
+
+---
+
+## ▶️ Usage
+
+```bash
+./conky.sh start
+./conky.sh stop
+./conky.sh restart
+```
+
+---
+
 ## 🔧 Requirements
 
 ### Mandatory
 
-- **Conky ≥ 1.22**
-- `curl`
-- `xmllint`
-- `perl`
-- `lm-sensors`
+- Conky ≥ 1.22
+- curl
+- lm-sensors
+- bc
+- imagemagick
+- libxml2-utils (xmllint)
+- perl + Astro::MoonPhase
 
-### Optional (GPU)
+### Optional
 
-- `nvidia-smi` (for NVIDIA GPUs)
+- nvidia-smi (GPU stats)
 
 ---
 
-## 🌦️ OpenWeatherMap API
+## 🧩 Installation Options
 
-Weather data uses **OpenWeatherMap XML API**.
+---
 
-> The first **1,000 API calls per day are FREE**
+### [Option A - Quick Start as above (Recommended)](#quick-start-recommended)
 
-### 1️⃣ Create your API key
+---
 
-👉 [https://openweathermap.org/api](https://openweathermap.org/api)
-
-### 2️⃣ Create secrets file
+### Option B – AppImage (Alternative Easy Method)
+- Download AppImage from https://github.com/brndnmtthws/conky/releases
+#### Required dependencies:
+- curl
+- lm-sensors
+- bc
+- imagemagick
+- libxml2-utils (xmllint)
+- perl + Astro::MoonPhase
 
 ```bash
-mkdir -p ~/.config/conky
-nano ~/.config/conky/secrets.conf
-chmod 600 ~/.config/conky/secrets.conf
-```
+Run once:
 
-```ini
-OWM_APPID=YOUR_API_KEY_HERE
-```
+./init.sh
 
-The key is **never hardcoded** in `.conkyrc`.
+Then:
 
----
-
-## 🌙 Moon Phase System (Offline)
-
-Moon phases are generated **locally**, no HTTP requests.
-
-- Replaces the old NASA-based solution
-- Works on **both v1.10 and v2.0**
-- Supports PT-BR translation automatically
-
-Scripts involved:
-
-- `GetMoon.sh`
-- `lune_die.sh`
-- `moon.pl`
-- `moon_age.pl`
-
-Internal Scripts
-
-- `time.sh`  
-  Central weather, wind, moon, and localization logic.
-  All data parsing and language switching happens here.
-
----
-
-## ⚙️ Installation Options
-
----
-
-### Option A – AppImage (Recommended & Easy)
-
-No installation required.
-
-```bash
-git clone https://github.com/wekers/conky.git
-cd conky
-# download AppImage from https://github.com/brndnmtthws/conky/releases
-chmod +x conky-ubuntu-24.04-x86_64-v1.22.2.AppImage
-
-./conky-ubuntu-24.04-x86_64-v1.22.2.AppImage -c conkyrc/.conkyrc_2k
-```
-
-Or for Full HD:
-
-```bash
-./conky-ubuntu-24.04-x86_64-v1.22.2.AppImage -c conkyrc/.conkyrc_1080p
+chmod +x conky-*.AppImage
+./conky-*.AppImage -c conkyrc/.conkyrc_2k
+or
+./conky-*.AppImage -c conkyrc/.conkyrc_1080p
 ```
 
 ---
 
-### Option B – Compile from Source (Advanced)
+### Option C - Compile From Source (Advanced)
 
 #### Pre-install
 
@@ -225,37 +340,123 @@ cmake \
 make
 sudo make install
 ```
-
----
-
-## ▶️ Running Conky
-
-```bash
-./conky.sh
-```
-
-or manually:
-
-```bash
-conky -c conkyrc/.conkyrc_2k
-```
-
 ---
 
 ## 🌍 Language Support
 
-Language is auto-detected via `LANG`.
+Auto-detected via `LANG`.
 
 | LANG    | Output    |
-| ------- | --------- |
-| `pt_BR` | Português |
-| others  | English   |
+|--------|----------|
+| pt_BR  | Portuguese |
+| others | English   |
 
 Applies to:
 
 - Weather labels
 - Moon phases
 - Wind descriptions
+
+---
+
+## 🛠️ Troubleshooting
+
+### ❌ Weather not showing
+
+- Check API key
+- Check city format: `city,country`
+- Validate XML cache:
+
+```bash
+cat ~/.cache/weather_current.xml
+```
+
+---
+
+### ❌ Conky not starting
+
+- Ensure scripts are executable:
+
+```bash
+chmod +x *.sh
+```
+
+- NEVER use:
+
+```bash
+sh script.sh
+```
+
+Use:
+
+```bash
+./script.sh
+```
+
+---
+
+### ❌ Network showing 0
+
+- Wrong interface in `template0`
+- Run detection command (see above)
+
+---
+
+### ❌ Moon rendering inverted
+
+- Fix hemisphere in `GetMoon.sh`
+
+---
+
+### ❌ xmllint not found
+
+- Install:
+
+```bash
+sudo apt install libxml2-utils
+```
+
+---
+
+### ❌ Astro::MoonPhase not found
+
+
+- Install:
+
+```bash
+sudo cpanm Astro::MoonPhase
+```
+
+---
+
+### ❌ No sensors found
+
+- Run:
+
+```bash
+sudo sensors-detect
+```
+
+
+---
+## 🚀 Supported Versions
+
+| Version            | Status    | Description               |
+| ------------------ | --------- | ------------------------- |
+| **v2.1 (main)**    | ✅ Active | Conky **1.22+**, Lua-free configuration |
+| **v1.10 (legacy)** | 🧊 Frozen | Conky **1.10**, Lua-based Language |
+
+Legacy support is preserved in:
+
+- **Branch:** `legacy-1.10`
+- **Tag:** `v1.10-legacy`
+
+---
+
+## Versioning
+
+This project follows **Semantic Versioning** and documents all notable changes
+in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -267,10 +468,10 @@ This project was fully refactored in version 2.0 due to:
 - Conky Lua instability and maintenance cost
 - Desire for a portable, AppImage-friendly setup
 
-Version 2.0 removes all Lua dependencies and relies only on:
+Version 2.0 removes all Lua language dependencies and relies only on:
 Bash, Perl (local), and native Conky features.
 
-- ❌ No Lua
+- ❌ No Lua scripting required
 - ✅ Native Conky objects
 - ✅ Portable configs
 - ✅ Easier maintenance
@@ -279,18 +480,10 @@ Bash, Perl (local), and native Conky features.
 
 ---
 
-## 🧊 Legacy Version (Conky 1.10)
-
-If you still use Conky 1.10:
+## 🧊 Legacy Version
 
 ```bash
 git checkout legacy-1.10
-```
-
-Tag:
-
-```bash
-git checkout v1.10-legacy
 ```
 
 ---
@@ -298,4 +491,4 @@ git checkout v1.10-legacy
 ## 📜 License
 
 MIT License  
-© Fernando Gilli
+© WeKeRs
