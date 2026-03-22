@@ -1,4 +1,4 @@
-# Conky – Monitor de Desktop Moderno (sem dependência de scripts Lua, Conky ≥ 1.22)
+# Conky – Monitor de Desktop Moderno (sem scripts Lua, Conky ≥ 1.22)
 
 ![Versão](https://img.shields.io/github/v/tag/wekers/conky?label=version)
 ![Release](https://img.shields.io/github/release/wekers/conky)
@@ -11,8 +11,12 @@
 
 ---
 
+### Uma configuração Conky totalmente portátil, sem dependência da linguagem Lua, com instalação automatizada e compatível com múltiplas distribuições.
+
+---
+
 > **Status:** Estável  
-> **Versão:** v2.1  
+> **Versão:** v2.1.0  
 > **Filosofia:** Dependências mínimas, portabilidade máxima
 
 ---
@@ -33,6 +37,17 @@ Uma configuração **moderna, elegante e sem dependência de scripts Lua**, proj
 - 🌍 suporte multilíngue
 - 🖥️ layouts para múltiplas resoluções
 
+## 🎯 Por que este projeto?
+
+A maioria das configurações de Conky depende de Lua e caminhos fixos (hardcoded).
+
+Este projeto oferece:
+
+- Uma arquitetura sem dependência de Lua
+- Scripts totalmente portáveis
+- Compatibilidade entre diferentes distribuições
+- Instalação e manutenção simplificadas
+
 ### Recursos
 
 - 🌦️ Integração com OpenWeatherMap (API XML)
@@ -41,7 +56,7 @@ Uma configuração **moderna, elegante e sem dependência de scripts Lua**, proj
 - 🧠 localização inteligente (EN / PT-BR detectada automaticamente)
 - 🖥️ Layouts para 1080p e 2K
 - 🎮 Suporte opcional a GPU NVIDIA
-- ❌ Nenhum script Lua em é necessário
+- ❌ Nenhum script Lua é necessário
 
 ---
 
@@ -96,7 +111,7 @@ conky/
 
 ---
 
-## 🚀 Início Rápido (Recomendado)
+## 🚀 Inicio Rapido (Recomendado)
 - ### 🌦️ API do OpenWeatherMap
   - Os dados meteorológicos usam a **API XML do OpenWeatherMap**.
 
@@ -125,7 +140,7 @@ nano ~/.config/conky/secrets.conf
 ### 3️⃣ Configure sua chave de API e sua cidade (cidade,país):
 ```ini
 OWM_APPID=YOUR_API_KEY
-OWM_CITY=Sacramento,US
+OWM_CITY=Salvador,BR
 ```
 A chave nunca é definida diretamente no `.conkyrc`.
 
@@ -276,8 +291,7 @@ conky.sh
 
 ---
 
-### [Opção A - Início Rápido (Recomendado)](#início-rápido-recomendado)
-
+### [Opção A — Início Rápido (Recomendado)](#-inicio-rapido-recomendado) ☝️
 ---
 
 ### Opção B – AppImage (Método Fácil Alternativo)
@@ -340,6 +354,28 @@ cmake \
 make
 sudo make install
 ```
+
+---
+
+## 🪟 Uso no Windows 10/11 (com WSL2)
+
+Funciona com limitações:
+
+### Suportado
+- Clima
+- Fases da lua
+- Informações do Sistema (parcial)
+- Renderização
+
+### Limitações
+- Sensores (CPU temperatura, etc.)
+- Sem suporte ao `hddtemp`
+- Métricas do sistema são limitadas
+
+### Recomendação
+- WSL é suportado apenas para testes e desenvolvimento.
+- Para ter uma funcionalidade completa, use **Linux**.
+
 ---
 
 ## 🌍 Suporte a Idiomas
@@ -444,7 +480,7 @@ sudo sensors-detect
 
 | Versão             | Status       | Descrição                       |
 | ------------------ | ------------ | ------------------------------- |
-| **v2.1 (main)**    | ✅ Ativa     | Conky **1.22+**, configuração sem dependência de scripts em Lua |
+| **v2.1.0 (main)**    | ✅ Ativa     | Conky **1.22+**, configuração sem dependência de scripts em Lua |
 | **v1.10 (legacy)** | 🧊 Congelada | Conky **1.10**, linguagem baseada em Lua |
 
 O suporte legado é preservado em:
@@ -490,8 +526,17 @@ git checkout legacy-1.10
 ```
 
 ---
+## 📄 Licença / Uso
+Licença MIT
 
-## 📜 Licença
+Sinta-se à vontade para:
+- clonar
+- modificar
+- adaptar conforme sua necessidade
+  
+* * *
 
-Licença MIT  
+### 👉 Se este projeto te ajudou, uma ⭐ no repositório já vale um café. ☕🙂
+
+* * *
 © WeKeRs

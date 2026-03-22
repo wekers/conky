@@ -10,9 +10,10 @@
 ![Last Commit](https://img.shields.io/github/last-commit/wekers/conky)
 
 ---
-
+### A fully portable, Lua-free Conky setup with automated installation and cross-distribution support.
+---
 > **Status:** Stable  
-> **Version:** v2.1  
+> **Version:** v2.1.0  
 > **Philosophy:** Minimal dependencies, maximum portability
 
 ---
@@ -32,6 +33,16 @@ A **modern, elegant and fully Lua-free Conky setup**, designed for:
 - 🧩 modular scripts
 - 🌍 multi-language support
 - 🖥️ multi-resolution layouts
+
+## 🎯 Why this project?
+
+Most Conky setups rely on Lua and hardcoded paths.
+
+This project provides:
+- A Lua-free architecture
+- Fully portable scripts
+- Cross-distribution compatibility
+- Simple installation and maintenance
 
 ### Features
 
@@ -276,7 +287,7 @@ conky.sh
 
 ---
 
-### [Option A - Quick Start as above (Recommended)](#quick-start-recommended)
+### [Option A - Quick Start (Recommended)](#-quick-start-recommended) ☝️
 
 ---
 
@@ -340,6 +351,26 @@ cmake \
 make
 sudo make install
 ```
+---
+## 🪟 Windows (WSL2 Support)
+
+This project works on WSL2 (Windows 10/11), with some limitations.
+
+### Supported
+- Weather
+- Moon phases
+- System information (partial)
+- Full Conky rendering
+
+### Limitations
+- No hardware sensors (CPU temperature, etc.)
+- No `hddtemp` support
+- Limited system-level metrics
+
+### Recommendation
+- WSL is supported for testing and development.
+- For full functionality, use **native Linux**.
+
 ---
 
 ## 🌍 Language Support
@@ -443,7 +474,7 @@ sudo sensors-detect
 
 | Version            | Status    | Description               |
 | ------------------ | --------- | ------------------------- |
-| **v2.1 (main)**    | ✅ Active | Conky **1.22+**, Lua-free configuration |
+| **v2.1.0 (main)**    | ✅ Active | Conky **1.22+**, Lua-free configuration |
 | **v1.10 (legacy)** | 🧊 Frozen | Conky **1.10**, Lua-based Language |
 
 Legacy support is preserved in:
@@ -487,8 +518,17 @@ git checkout legacy-1.10
 ```
 
 ---
+## 📄 License / Usage
+MIT — License. 
 
-## 📜 License
+Feel free to:
+- clone
+- modify
+- adapt it to your needs
+  
+* * *
 
-MIT License  
+### 👉 If this project helped you, a ⭐ in the repository is worth a coffee. ☕🙂
+
+* * *
 © WeKeRs
